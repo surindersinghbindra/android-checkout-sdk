@@ -1,0 +1,6 @@
+$dokka.format:javadoc-v1
+$dokka.linkExtension:html
+$dokka.location:com.caribeanroyal.ecommercesample.sdk.checkout.ui/CheckoutIntent.RetryPayment///PointingToDeclaration/com/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutIntent.RetryPayment.html
+$dokka.location:com.caribeanroyal.ecommercesample.sdk.checkout.ui/CheckoutIntent.SubmitPayment///PointingToDeclaration/com/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutIntent.SubmitPayment.html
+com.caribeanroyal.ecommercesample.sdk.checkout.ui
+

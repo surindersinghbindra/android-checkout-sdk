@@ -1,0 +1,15 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/surindersingh/Documents/CaribeanRoyal/ECommerceSample/sdk/checkout-ui/src/main/AndroidManifest.xml:1:1-72
+INJECTED from /Users/surindersingh/Documents/CaribeanRoyal/ECommerceSample/sdk/checkout-ui/src/main/AndroidManifest.xml:1:1-72
+	package
+		ADDED from /Users/surindersingh/Documents/CaribeanRoyal/ECommerceSample/sdk/checkout-ui/src/main/AndroidManifest.xml:1:11-70
+		INJECTED from /Users/surindersingh/Documents/CaribeanRoyal/ECommerceSample/sdk/checkout-ui/src/main/AndroidManifest.xml
+uses-sdk
+INJECTED from /Users/surindersingh/Documents/CaribeanRoyal/ECommerceSample/sdk/checkout-ui/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/surindersingh/Documents/CaribeanRoyal/ECommerceSample/sdk/checkout-ui/src/main/AndroidManifest.xml
+INJECTED from /Users/surindersingh/Documents/CaribeanRoyal/ECommerceSample/sdk/checkout-ui/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /Users/surindersingh/Documents/CaribeanRoyal/ECommerceSample/sdk/checkout-ui/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/surindersingh/Documents/CaribeanRoyal/ECommerceSample/sdk/checkout-ui/src/main/AndroidManifest.xml

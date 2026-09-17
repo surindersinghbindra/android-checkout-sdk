@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Brand B Shop</string>
+    <string name="welcome_message">Welcome to the Brand B Shop</string>
+    <style name="Theme.ECommerceSample" parent="android:Theme.Material.Light.NoActionBar"/>
+</resources>

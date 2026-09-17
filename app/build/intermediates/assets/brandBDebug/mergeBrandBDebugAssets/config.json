@@ -1,0 +1,7 @@
+{
+  "theme": "dark",
+  "api_endpoint": "https://api.brandb.example.com",
+  "feature_flags": {
+    "enable_new_checkout": false
+  }
+}

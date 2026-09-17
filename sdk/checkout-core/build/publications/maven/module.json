@@ -1,0 +1,89 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.caribeanroyal.ecommercesample",
+    "module": "checkout-core",
+    "version": "1.0.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.7"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.0.21"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "checkout-core-1.0.0.jar",
+          "url": "checkout-core-1.0.0.jar",
+          "size": 5240,
+          "sha512": "a9f35eda695f3a122f0e532459b3be094917b8c1bcb749a52a9e12835e1c3a307cba593901ee22c0e4ec13a946c2452faaf8fd5f09cab8d95f733f46fd4291ae",
+          "sha256": "5fb690203bbb8c039cb3df00b0141dbf3034c99b4c2ec55096ea6eb525a41961",
+          "sha1": "64984eae6f65e6a3d73af03d76e92dc6197e2e27",
+          "md5": "d2f4e46debc32aca3b153eabf6eb1cc5"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlinx",
+          "module": "kotlinx-coroutines-core",
+          "version": {
+            "requires": "1.8.0"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.0.21"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "checkout-core-1.0.0.jar",
+          "url": "checkout-core-1.0.0.jar",
+          "size": 5240,
+          "sha512": "a9f35eda695f3a122f0e532459b3be094917b8c1bcb749a52a9e12835e1c3a307cba593901ee22c0e4ec13a946c2452faaf8fd5f09cab8d95f733f46fd4291ae",
+          "sha256": "5fb690203bbb8c039cb3df00b0141dbf3034c99b4c2ec55096ea6eb525a41961",
+          "sha1": "64984eae6f65e6a3d73af03d76e92dc6197e2e27",
+          "md5": "d2f4e46debc32aca3b153eabf6eb1cc5"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+var packageSearchIndex = [{"l":"com.caribeanroyal.ecommercesample.sdk.checkout.ui","url":"com/caribeanroyal/ecommercesample/sdk/checkout/ui/package-summary.html"}, {"l":"All packages","url":"index.html"}]
