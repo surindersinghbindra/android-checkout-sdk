@@ -6,7 +6,7 @@ on:
 
 jobs:
   publish:
-    runs-name: Publish Android SDK
+    name: Publish Android SDK
     runs-on: ubuntu-latest
     permissions:
       contents: read
