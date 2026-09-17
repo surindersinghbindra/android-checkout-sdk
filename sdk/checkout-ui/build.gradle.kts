@@ -58,7 +58,7 @@ afterEvaluate {
             create<MavenPublication>("release") {
                 groupId = "com.caribeanroyal.ecommercesample"
                 artifactId = "checkout-ui"
-                version = "1.0.0"
+                version = (project.findProperty("version") as? String)?.takeIf { it != "unspecified" } ?: "1.0.0-SNAPSHOT"
                 from(components["release"])
             }
         }

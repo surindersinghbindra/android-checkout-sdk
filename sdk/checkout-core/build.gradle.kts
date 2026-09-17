@@ -21,7 +21,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "com.caribeanroyal.ecommercesample"
             artifactId = "checkout-core"
-            version = "1.0.0"
+            version = (project.findProperty("version") as? String)?.takeIf { it != "unspecified" } ?: "1.0.0-SNAPSHOT"
             from(components["java"])
         }
     }

@@ -1,0 +1,40 @@
+name: Publish SDK to GitHub Packages
+
+on:
+  release:
+    types: [published] # This triggers whenever you use the "Create a new release" button on GitHub
+
+jobs:
+  publish:
+    runs-name: Publish Android SDK
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write # Crucial permission to allow pushing to GitHub Packages
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Extract Version from GitHub Release Tag
+        id: get_version
+        run: |
+          # If tag is v1.2.3, this extracts just 1.2.3
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "Extracted version: $VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Publish to GitHub Packages
+        run: ./gradlew :sdk:checkout-core:publish :sdk:checkout-ui:publish -Pversion=${{ env.VERSION }}
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Automatically provided by GitHub Actions
