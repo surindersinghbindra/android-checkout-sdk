@@ -29,7 +29,7 @@ class CheckoutScreenTest {
         every { mockProcessor.type } returns PaymentProcessorType.STRIPE
         
         every { checkoutSdk.enabledProcessors } returns listOf(mockProcessor)
-        coEvery { checkoutSdk.executeCheckout(any(), any(), any()) } returns true
+        coEvery { checkoutSdk.executeCheckout(any(), any(), any(), any()) } returns true
         coEvery { checkoutSdk.submitPayment(any(), any(), any()) } returns true
 
         val viewModel = CheckoutViewModel(checkoutSdk)
@@ -68,7 +68,7 @@ class CheckoutScreenTest {
         every { mockProcessor.type } returns PaymentProcessorType.STRIPE
         
         every { checkoutSdk.enabledProcessors } returns listOf(mockProcessor)
-        coEvery { checkoutSdk.executeCheckout(any(), any(), any()) } returns true
+        coEvery { checkoutSdk.executeCheckout(any(), any(), any(), any()) } returns true
         coEvery { checkoutSdk.submitPayment(any(), any(), any()) } returns true
 
         val viewModel = CheckoutViewModel(checkoutSdk)

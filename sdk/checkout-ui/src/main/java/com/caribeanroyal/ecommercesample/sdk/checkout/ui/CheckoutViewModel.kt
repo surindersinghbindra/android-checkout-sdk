@@ -7,6 +7,8 @@ import com.caribeanroyal.ecommercesample.sdk.checkout.core.CheckoutSdk
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import com.caribeanroyal.ecommercesample.sdk.checkout.core.AlreadyProcessedException
+import java.util.UUID
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import android.util.Log
@@ -14,6 +16,9 @@ import android.util.Log
 class CheckoutViewModel(
     private val sdkEngine: CheckoutSdk
 ) : ViewModel() {
+
+    private val sessionKey = UUID.randomUUID().toString()
+
 
     private val _state = MutableStateFlow(CheckoutState())
     val state: StateFlow<CheckoutState> = _state.asStateFlow()

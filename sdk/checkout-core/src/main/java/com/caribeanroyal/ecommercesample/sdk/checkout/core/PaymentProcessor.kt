@@ -27,5 +27,5 @@ interface PaymentProcessor {
      * @param currency The ISO currency code.
      * @return true if successful, false otherwise.
      */
-    suspend fun processPayment(amount: Double, currency: String): Boolean
+    suspend fun processPayment(amount: Double, currency: String, idempotencyKey: String? = null): Boolean
 }

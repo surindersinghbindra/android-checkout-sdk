@@ -13,6 +13,9 @@ class CheckoutSdk private constructor(
     val analytics: CheckoutAnalytics?
 ) {
 
+    private val processedKeys = mutableSetOf<String>()
+
+
     @Deprecated("Use Builder and enableProcessors instead")
     constructor(paymentProcessor: PaymentProcessor) : this(listOf(paymentProcessor), "production", false, null)
 
@@ -65,16 +68,31 @@ class CheckoutSdk private constructor(
     /**
      * Executes the checkout flow using the specified processor.
      */
-    suspend fun executeCheckout(amount: Double, currency: String, processorType: PaymentProcessorType): Boolean {
+    suspend fun executeCheckout(amount: Double, currency: String, processorType: PaymentProcessorType, idempotencyKey: String? = null): Boolean {
+        if (idempotencyKey != null && processedKeys.contains(idempotencyKey)) {
+            throw AlreadyProcessedException("Order already processed")
+        }
         val processor = enabledProcessors.find { it.type == processorType } 
             ?: throw IllegalArgumentException("Processor $processorType is not enabled in the SDK.")
-        return processor.processPayment(amount, currency)
+        
+        val success = processor.processPayment(amount, currency, idempotencyKey)
+        if (success && idempotencyKey != null) {
+            processedKeys.add(idempotencyKey)
+        }
+        return success
     }
     
     @Deprecated("Use executeCheckout with PaymentProcessorType instead")
-    suspend fun executeCheckout(amount: Double, currency: String): Boolean {
+    suspend fun executeCheckout(amount: Double, currency: String, idempotencyKey: String? = null): Boolean {
+        if (idempotencyKey != null && processedKeys.contains(idempotencyKey)) {
+            throw AlreadyProcessedException("Order already processed")
+        }
         if (enabledProcessors.isEmpty()) return false
-        return enabledProcessors.first().processPayment(amount, currency)
+        val success = enabledProcessors.first().processPayment(amount, currency, idempotencyKey)
+        if (success && idempotencyKey != null) {
+            processedKeys.add(idempotencyKey)
+        }
+        return success
     }
     fun logEvent(tag: String, message: String) {
         if (debuggable) {

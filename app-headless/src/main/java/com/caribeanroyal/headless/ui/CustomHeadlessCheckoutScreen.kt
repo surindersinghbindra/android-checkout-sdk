@@ -28,6 +28,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import java.util.UUID
+import com.caribeanroyal.ecommercesample.sdk.checkout.core.AlreadyProcessedException
 import com.caribeanroyal.ecommercesample.sdk.checkout.core.CheckoutSdk
 import kotlinx.coroutines.launch
 
@@ -43,6 +45,7 @@ fun CustomHeadlessCheckoutScreen(
 ) {
     val coroutineScope = rememberCoroutineScope()
     var status by remember { mutableStateOf("Ready to pay") }
+    val sessionKey = remember { UUID.randomUUID().toString() }
     var isProcessing by remember { mutableStateOf(false) }
     
     var expanded by remember { mutableStateOf(false) }
@@ -113,9 +116,15 @@ fun CustomHeadlessCheckoutScreen(
                         coroutineScope.launch {
                             isProcessing = true
                             status = "Processing via Core SDK..."
-                            val result = sdkEngine.executeCheckout(amount, currency, processor)
+                            try {
+                                val result = sdkEngine.executeCheckout(amount, currency, processor, sessionKey)
+                                status = if (result) "Payment Successful!" else "Payment Failed."
+                            } catch (e: AlreadyProcessedException) {
+                                status = "This order has already been placed."
+                            } catch (e: Exception) {
+                                status = "Payment Error: ${e.message}"
+                            }
                             isProcessing = false
-                            status = if (result) "Payment Successful!" else "Payment Failed."
                         }
                     }
                 },
