@@ -23,6 +23,8 @@ import com.caribeanroyal.ecommercesample.feature.booking.ui.BookingScreen
 import com.caribeanroyal.ecommercesample.feature.booking.ui.CruiseDetailScreen
 import com.caribeanroyal.ecommercesample.feature.booking.viewmodel.BookingViewModel
 import com.caribeanroyal.ecommercesample.feature.booking.viewmodel.BookingViewModelFactory
+import com.caribeanroyal.ecommercesample.sdk.checkout.core.CheckoutAnalytics
+import android.util.Log
 import com.caribeanroyal.ecommercesample.sdk.checkout.core.CheckoutSdk
 import com.caribeanroyal.ecommercesample.sdk.checkout.core.PaymentProcessorType
 import kotlinx.coroutines.launch
@@ -49,9 +51,20 @@ class MainActivity : ComponentActivity() {
         val searchCruisesUseCase = SearchCruisesUseCase(repository)
         val bookingFactory = BookingViewModelFactory(searchCruisesUseCase)
 
+        val analyticsTracker = object : CheckoutAnalytics {
+            override fun logEvent(eventName: String, params: Map<String, Any>) {
+                Log.d("HeadlessAnalytics", "EVENT: $eventName")
+            }
+            override fun logError(throwable: Throwable, message: String) {
+                Log.e("HeadlessAnalytics", "ERROR: $message", throwable)
+            }
+        }
+        
         val sdkEngine = CheckoutSdk.Builder()
-            .enableProcessors(listOf(PaymentProcessorType.ADYEN, PaymentProcessorType.STRIPE))
-            .setEnvironment("headless-production")
+            .enableProcessors(listOf(PaymentProcessorType.ADYEN, PaymentProcessorType.STRIPE, PaymentProcessorType.FAIL_SIMULATOR))
+            .setEnvironment("staging")
+            .setDebuggable(true)
+            .setAnalytics(analyticsTracker)
             .build()
 
         setContent {

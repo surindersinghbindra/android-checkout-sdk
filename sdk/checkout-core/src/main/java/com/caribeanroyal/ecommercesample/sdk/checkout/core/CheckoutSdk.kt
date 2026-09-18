@@ -28,6 +28,7 @@ class CheckoutSdk private constructor(
                 when(type) {
                     PaymentProcessorType.ADYEN -> enabledProcessors.add(AdyenProcessor())
                     PaymentProcessorType.STRIPE -> enabledProcessors.add(StripeProcessor())
+                    PaymentProcessorType.FAIL_SIMULATOR -> enabledProcessors.add(FailProcessor())
                     PaymentProcessorType.HEADLESS -> { /* handled by host app if needed, omitting here for simplicity */ }
                 }
             }

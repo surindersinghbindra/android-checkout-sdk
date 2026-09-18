@@ -40,6 +40,12 @@ public final class com/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutS
 	public final fun setPaymentProcessor (Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/PaymentProcessor;)Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutSdk$Builder;
 }
 
+public final class com/caribeanroyal/ecommercesample/sdk/checkout/core/FailProcessor : com/caribeanroyal/ecommercesample/sdk/checkout/core/PaymentProcessor {
+	public fun <init> ()V
+	public fun getType ()Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/PaymentProcessorType;
+	public fun processPayment (DLjava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
 public abstract interface class com/caribeanroyal/ecommercesample/sdk/checkout/core/PaymentProcessor {
 	public abstract fun getType ()Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/PaymentProcessorType;
 	public abstract fun processPayment (DLjava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -47,6 +53,7 @@ public abstract interface class com/caribeanroyal/ecommercesample/sdk/checkout/c
 
 public final class com/caribeanroyal/ecommercesample/sdk/checkout/core/PaymentProcessorType : java/lang/Enum {
 	public static final field ADYEN Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/PaymentProcessorType;
+	public static final field FAIL_SIMULATOR Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/PaymentProcessorType;
 	public static final field HEADLESS Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/PaymentProcessorType;
 	public static final field STRIPE Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/PaymentProcessorType;
 	public final fun getDisplayName ()Ljava/lang/String;

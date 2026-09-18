@@ -21,3 +21,13 @@ class StripeProcessor : PaymentProcessor {
         return true
     }
 }
+
+class FailProcessor : PaymentProcessor {
+    override val type = PaymentProcessorType.FAIL_SIMULATOR
+
+    override suspend fun processPayment(amount: Double, currency: String): Boolean {
+        println("Processing $amount $currency via internal FAIL simulator")
+        delay(1000)
+        return false // Simulate failure
+    }
+}

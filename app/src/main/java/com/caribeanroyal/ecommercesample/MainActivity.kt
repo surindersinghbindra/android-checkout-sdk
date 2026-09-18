@@ -11,6 +11,8 @@ import com.caribeanroyal.ecommercesample.designsystem.theme.BrandPrimary
 import com.caribeanroyal.ecommercesample.designsystem.theme.BrandSecondary
 import com.caribeanroyal.ecommercesample.designsystem.theme.ECommerceTheme
 import com.caribeanroyal.ecommercesample.navigation.AppNavigation
+import com.caribeanroyal.ecommercesample.sdk.checkout.core.CheckoutAnalytics
+import android.util.Log
 import com.caribeanroyal.ecommercesample.sdk.checkout.core.CheckoutSdk
 import com.caribeanroyal.ecommercesample.sdk.checkout.ui.CheckoutThemeConfig
 
@@ -26,10 +28,24 @@ class MainActivity : ComponentActivity() {
         val appComponent = DaggerAppComponent.factory().create(applicationContext)
         val searchCruisesUseCase = appComponent.searchCruisesUseCase()
         
+        // Analytics tracker implementation
+        val analyticsTracker = object : CheckoutAnalytics {
+            override fun logEvent(eventName: String, params: Map<String, Any>) {
+                Log.d("HostAppAnalytics", "EVENT: $eventName | params: $params")
+            }
+
+            override fun logError(throwable: Throwable, message: String) {
+                Log.e("HostAppAnalytics", "ERROR: $message", throwable)
+                // In production, this would go to Firebase Crashlytics
+            }
+        }
+        
         // Demonstrated Aggregator Pattern: SDK handles the processors internally!
         val checkoutSdk = CheckoutSdk.Builder()
-            .enableProcessors(listOf(PaymentProcessorType.ADYEN, PaymentProcessorType.STRIPE))
+            .enableProcessors(listOf(PaymentProcessorType.ADYEN, PaymentProcessorType.STRIPE, PaymentProcessorType.FAIL_SIMULATOR))
             .setEnvironment("staging")
+            .setDebuggable(true)
+            .setAnalytics(analyticsTracker)
             .build()
             
         // 2. Build the dynamic runtime white-label theme configuration

@@ -9,7 +9,8 @@ import androidx.annotation.Keep
 enum class PaymentProcessorType(val displayName: String) {
     ADYEN("Adyen"),
     STRIPE("Stripe"),
-    HEADLESS("Custom Headless")
+    HEADLESS("Custom Headless"),
+    FAIL_SIMULATOR("Simulate Failure (Demo)")
 }
 
 /**
