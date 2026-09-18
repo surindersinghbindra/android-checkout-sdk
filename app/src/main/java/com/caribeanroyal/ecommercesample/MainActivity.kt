@@ -3,6 +3,12 @@ package com.caribeanroyal.ecommercesample
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.material3.Scaffold
+import com.caribeanroyal.ecommercesample.navigation.ECommerceApp
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -10,7 +16,6 @@ import androidx.compose.ui.Modifier
 import com.caribeanroyal.ecommercesample.designsystem.theme.BrandPrimary
 import com.caribeanroyal.ecommercesample.designsystem.theme.BrandSecondary
 import com.caribeanroyal.ecommercesample.designsystem.theme.ECommerceTheme
-import com.caribeanroyal.ecommercesample.navigation.AppNavigation
 import com.caribeanroyal.ecommercesample.sdk.checkout.core.CheckoutAnalytics
 import android.util.Log
 import com.caribeanroyal.ecommercesample.sdk.checkout.core.CheckoutSdk
@@ -24,6 +29,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         
         val appComponent = DaggerAppComponent.factory().create(applicationContext)
         val searchCruisesUseCase = appComponent.searchCruisesUseCase()
@@ -59,16 +65,19 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ECommerceTheme {
-                Surface(
+                Scaffold(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    AppNavigation(
-                        checkoutSdk = checkoutSdk,
-                        checkoutThemeConfig = sdkThemeConfig,
-                        viewModelStoreOwner = this,
-                        searchCruisesUseCase = searchCruisesUseCase
-                    )
+                    containerColor = MaterialTheme.colorScheme.background,
+                    contentWindowInsets = WindowInsets(0, 0, 0, 0)
+                ) { innerPadding ->
+                    Box(modifier = Modifier.padding(innerPadding)) {
+                        ECommerceApp(
+                            checkoutSdk = checkoutSdk,
+                            checkoutThemeConfig = sdkThemeConfig,
+                            viewModelStoreOwner = this@MainActivity,
+                            searchCruisesUseCase = searchCruisesUseCase
+                        )
+                    }
                 }
             }
         }
