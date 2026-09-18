@@ -1,6 +1,6 @@
-# CaribbeanRoyal E-Commerce App & Checkout SDK Monorepo
+# E-Commerce App & Checkout SDK Monorepo
 
-Welcome to the CaribbeanRoyal Android Monorepo. This repository contains the consumer-facing host applications and our internal, white-label Checkout SDK.
+Welcome to the E-Commerce  Android Monorepo. This repository contains the consumer-facing host applications and our internal, white-label Checkout SDK.
 
 ## Architecture Structure
 
