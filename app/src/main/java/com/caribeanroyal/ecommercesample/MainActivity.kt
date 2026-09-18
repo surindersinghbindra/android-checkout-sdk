@@ -11,7 +11,6 @@ import androidx.compose.material3.Scaffold
 import com.caribeanroyal.ecommercesample.navigation.ECommerceApp
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.caribeanroyal.ecommercesample.designsystem.theme.BrandPrimary
 import com.caribeanroyal.ecommercesample.designsystem.theme.BrandSecondary

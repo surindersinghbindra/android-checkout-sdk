@@ -13,28 +13,17 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.caribeanroyal.ecommercesample.core.network.repository.NetworkCruiseRepositoryImpl
 import com.caribeanroyal.ecommercesample.core.domain.usecase.SearchCruisesUseCase
 import com.caribeanroyal.ecommercesample.core.network.api.CruiseApiService
 import com.caribeanroyal.ecommercesample.core.network.interceptor.MockCruiseInterceptor
 import com.caribeanroyal.ecommercesample.designsystem.theme.ECommerceTheme
-import com.caribeanroyal.ecommercesample.feature.booking.ui.BookingScreen
-import com.caribeanroyal.ecommercesample.feature.booking.ui.CruiseDetailScreen
-import com.caribeanroyal.ecommercesample.feature.booking.viewmodel.BookingViewModel
 import com.caribeanroyal.ecommercesample.feature.booking.viewmodel.BookingViewModelFactory
 import com.caribeanroyal.ecommercesample.sdk.checkout.core.CheckoutAnalytics
 import android.util.Log
 import com.caribeanroyal.ecommercesample.sdk.checkout.core.CheckoutSdk
 import com.caribeanroyal.ecommercesample.sdk.checkout.core.PaymentProcessorType
-import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -42,6 +31,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(MockCruiseInterceptor())
