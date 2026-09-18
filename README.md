@@ -217,3 +217,15 @@ Building an SDK requires stricter discipline than building an app. We implemente
 
 ---
 
+
+## 6. Room DB Idempotency & Deferred App Startup
+
+To protect against duplicate payment processing (double-booking), the SDK implements an idempotency layer using a local **Room Database**.
+
+### Deferred Initialization (JIT)
+To ensure the SDK does not impact the host application's cold start time (TTI), we utilize a deferred initialization strategy with Jetpack App Startup:
+1.  **Block Auto-Init**: The SDK's Room Database initializer is explicitly disabled in the host app's `AndroidManifest.xml` using `tools:node="remove"`.
+2.  **Lazy Loading**: The SDK's database is only constructed via `AppInitializer.getInstance(context).initializeComponent(...)` exactly when the user navigates to the checkout flow (Just-In-Time).
+
+### Session Key Execution
+When checking out, the UI generates a unique `sessionKey` (UUID) and passes it to `sdkEngine.executeCheckout(..., idempotencyKey = sessionKey)`. If the transaction has already been processed, the core SDK throws an `AlreadyProcessedException`, which the UI layer catches and handles gracefully.
