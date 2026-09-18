@@ -1,0 +1,48 @@
+package com.caribeanroyal.headless.navigation
+
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.caribeanroyal.ecommercesample.feature.booking.viewmodel.BookingViewModelFactory
+import com.caribeanroyal.ecommercesample.sdk.checkout.core.CheckoutSdk
+import com.caribeanroyal.headless.ui.SplashScreen
+
+@Composable
+fun ECommerceHeadlessApp(
+    sdkEngine: CheckoutSdk,
+    viewModelStoreOwner: ViewModelStoreOwner,
+    bookingFactory: BookingViewModelFactory,
+    modifier: Modifier = Modifier,
+    navController: NavHostController = rememberNavController()
+) {
+    NavHost(
+        navController = navController,
+        startDestination = "splash",
+        modifier = modifier
+    ) {
+        composable("splash") {
+            SplashScreen(
+                onNavigateToHome = {
+                    navController.navigate("booking") {
+                        popUpTo("splash") { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        bookingGraph(
+            navController = navController,
+            viewModelStoreOwner = viewModelStoreOwner,
+            bookingFactory = bookingFactory
+        )
+
+        checkoutGraph(
+            navController = navController,
+            sdkEngine = sdkEngine
+        )
+    }
+}

@@ -1,5 +1,12 @@
 package com.caribeanroyal.headless
 
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.material3.Scaffold
+import com.caribeanroyal.headless.navigation.ECommerceHeadlessApp
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -69,52 +76,17 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ECommerceTheme {
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    val navController = rememberNavController()
-                    
-                    NavHost(navController = navController, startDestination = "booking") {
-                        composable("booking") { backStackEntry ->
-                            val bookingViewModel = ViewModelProvider(this@MainActivity, bookingFactory)[BookingViewModel::class.java]
-                            
-                            BookingScreen(
-                                viewModel = bookingViewModel,
-                                onNavigateToCruiseDetail = { packageCode ->
-                                    navController.navigate("cruiseDetail/$packageCode")
-                                }
-                            )
-                        }
-                        
-                        composable("cruiseDetail/{packageCode}") { backStackEntry ->
-                            val packageCode = backStackEntry.arguments?.getString("packageCode") ?: ""
-                            val bookingViewModel = ViewModelProvider(this@MainActivity, bookingFactory)[BookingViewModel::class.java]
-
-                            CruiseDetailScreen(
-                                packageCode = packageCode,
-                                viewModel = bookingViewModel,
-                                onNavigateBack = { navController.popBackStack() },
-                                onNavigateToCheckout = { price, currency, title, desc ->
-                                    navController.navigate("checkout/$price/$currency/${java.net.URLEncoder.encode(title, "UTF-8")}/${java.net.URLEncoder.encode(desc, "UTF-8")}")
-                                }
-                            )
-                        }
-
-                        composable("checkout/{price}/{currency}/{title}/{desc}") { backStackEntry ->
-                            val priceStr = backStackEntry.arguments?.getString("price") ?: "0.0"
-                            val currency = backStackEntry.arguments?.getString("currency") ?: "USD"
-                            val title = java.net.URLDecoder.decode(backStackEntry.arguments?.getString("title") ?: "", "UTF-8")
-                            val desc = java.net.URLDecoder.decode(backStackEntry.arguments?.getString("desc") ?: "", "UTF-8")
-                            val price = priceStr.toDoubleOrNull() ?: 0.0
-                            
-                            CustomHeadlessCheckoutScreen(
-                                sdkEngine = sdkEngine,
-                                amount = price,
-                                currency = currency,
-                                orderTitle = title,
-                                orderDescription = desc,
-                                onCheckoutSuccess = { navController.popBackStack("booking", inclusive = false) },
-                                onBack = { navController.popBackStack() }
-                            )
-                        }
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    containerColor = MaterialTheme.colorScheme.background,
+                    contentWindowInsets = WindowInsets(0, 0, 0, 0)
+                ) { innerPadding ->
+                    Box(modifier = Modifier.padding(innerPadding)) {
+                        ECommerceHeadlessApp(
+                            sdkEngine = sdkEngine,
+                            viewModelStoreOwner = this@MainActivity,
+                            bookingFactory = bookingFactory
+                        )
                     }
                 }
             }
@@ -122,105 +94,3 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun CustomHeadlessCheckoutScreen(
-    sdkEngine: CheckoutSdk, 
-    amount: Double,
-    currency: String,
-    orderTitle: String,
-    orderDescription: String,
-    onBack: () -> Unit,
-    onCheckoutSuccess: () -> Unit = onBack
-) {
-    val coroutineScope = rememberCoroutineScope()
-    var status by remember { mutableStateOf("Ready to pay") }
-    var isProcessing by remember { mutableStateOf(false) }
-    
-    var expanded by remember { mutableStateOf(false) }
-    val processors = sdkEngine.enabledProcessors.map { it.type }
-    var selectedProcessor by remember { mutableStateOf(processors.firstOrNull()) }
-
-    Column(
-        modifier = Modifier.fillMaxSize().padding(32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Custom Headless Checkout",
-            style = MaterialTheme.typography.headlineMedium
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-        
-        Card(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(orderTitle, style = MaterialTheme.typography.titleMedium)
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(orderDescription, style = MaterialTheme.typography.bodyMedium)
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(text = "Amount Due: $currency $amount", style = MaterialTheme.typography.titleLarge)
-            }
-        }
-        
-        Spacer(modifier = Modifier.height(24.dp))
-        
-        Text(text = "Status: $status", color = Color.DarkGray)
-        Spacer(modifier = Modifier.height(24.dp))
-        
-        if (isProcessing) {
-            CircularProgressIndicator()
-        } else if (status == "Payment Successful!") {
-            Text("Payment Successful!", color = Color(0xFF4CAF50), style = MaterialTheme.typography.headlineMedium)
-            Spacer(modifier = Modifier.height(24.dp))
-            Button(onClick = onCheckoutSuccess) {
-                Text("Explore More")
-            }
-        } else {
-            if (selectedProcessor != null) {
-                Box {
-                    OutlinedButton(onClick = { expanded = true }) {
-                        Text("Processor: ${selectedProcessor?.displayName}")
-                    }
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
-                        processors.forEach { processor ->
-                            DropdownMenuItem(
-                                text = { Text(processor.displayName) },
-                                onClick = {
-                                    selectedProcessor = processor
-                                    expanded = false
-                                }
-                            )
-                        }
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Button(
-                onClick = {
-                    selectedProcessor?.let { processor ->
-                        coroutineScope.launch {
-                            isProcessing = true
-                            status = "Processing via Core SDK..."
-                            val result = sdkEngine.executeCheckout(amount, currency, processor)
-                            isProcessing = false
-                            status = if (result) "Payment Successful!" else "Payment Failed."
-                        }
-                    }
-                },
-                enabled = selectedProcessor != null,
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
-            ) {
-                Text("Pay $currency $amount")
-            }
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            TextButton(onClick = onCheckoutSuccess) {
-                Text("Go Back")
-            }
-        }
-    }
-}
