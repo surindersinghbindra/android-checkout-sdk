@@ -1,19 +1,27 @@
 package com.caribeanroyal.ecommercesample.sdk.checkout.core
 
+import androidx.annotation.Keep
+
 /**
  * Headless entry point for the Checkout SDK business logic.
  */
+@Keep
 class CheckoutSdk private constructor(
     val enabledProcessors: List<PaymentProcessor>,
-    val environment: String
+    val environment: String,
+    val debuggable: Boolean,
+    val analytics: CheckoutAnalytics?
 ) {
 
     @Deprecated("Use Builder and enableProcessors instead")
-    constructor(paymentProcessor: PaymentProcessor) : this(listOf(paymentProcessor), "production")
+    constructor(paymentProcessor: PaymentProcessor) : this(listOf(paymentProcessor), "production", false, null)
 
+    @Keep
     class Builder {
         private val enabledProcessors = mutableListOf<PaymentProcessor>()
         private var environment: String = "production"
+        private var debuggable: Boolean = false
+        private var analytics: CheckoutAnalytics? = null
 
         fun enableProcessors(types: List<PaymentProcessorType>) = apply { 
             types.forEach { type ->
@@ -33,11 +41,15 @@ class CheckoutSdk private constructor(
         @JvmOverloads
         fun setEnvironment(env: String = "production") = apply { this.environment = env }
 
+        fun setDebuggable(debuggable: Boolean) = apply { this.debuggable = debuggable }
+
+        fun setAnalytics(analytics: CheckoutAnalytics) = apply { this.analytics = analytics }
+
         fun build(): CheckoutSdk {
             if (enabledProcessors.isEmpty()) {
                 throw IllegalStateException("At least one PaymentProcessorType must be enabled.")
             }
-            return CheckoutSdk(enabledProcessors, environment)
+            return CheckoutSdk(enabledProcessors, environment, debuggable, analytics)
         }
     }
 
@@ -62,5 +74,19 @@ class CheckoutSdk private constructor(
     suspend fun executeCheckout(amount: Double, currency: String): Boolean {
         if (enabledProcessors.isEmpty()) return false
         return enabledProcessors.first().processPayment(amount, currency)
+    }
+    fun logEvent(tag: String, message: String) {
+        if (debuggable) {
+            println("[$tag] $message")
+        }
+    }
+
+    fun logError(tag: String, message: String, throwable: Throwable? = null) {
+        if (debuggable) {
+            println("[$tag] ERROR: $message")
+            throwable?.printStackTrace()
+        }
+        val t = throwable ?: Exception(message)
+        analytics?.logError(t, "[$tag] $message")
     }
 }

@@ -24,7 +24,7 @@ class CheckoutScreenTest {
     @Test
     fun testCheckoutScreenDisplaysOrderTitleAndTotal() {
         // Arrange
-        val checkoutSdk = mockk<CheckoutSdk>()
+        val checkoutSdk = mockk<CheckoutSdk>(relaxed = true)
         val mockProcessor = mockk<PaymentProcessor>()
         every { mockProcessor.type } returns PaymentProcessorType.STRIPE
         
@@ -63,7 +63,7 @@ class CheckoutScreenTest {
     @Test
     fun testCheckoutFlowNavigationAndPayment() {
         // Arrange
-        val checkoutSdk = mockk<CheckoutSdk>()
+        val checkoutSdk = mockk<CheckoutSdk>(relaxed = true)
         val mockProcessor = mockk<PaymentProcessor>()
         every { mockProcessor.type } returns PaymentProcessorType.STRIPE
         

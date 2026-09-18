@@ -22,7 +22,7 @@ import org.junit.Test
 class CheckoutViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
-    private val checkoutSdk = mockk<CheckoutSdk>()
+    private val checkoutSdk = mockk<CheckoutSdk>(relaxed = true)
     private lateinit var viewModel: CheckoutViewModel
 
     @Before

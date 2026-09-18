@@ -7,6 +7,7 @@ plugins {
 
 dependencies {
     implementation(libs.coroutines.core)
+    compileOnly("androidx.annotation:annotation:1.7.1")
     testImplementation(libs.junit)
     testImplementation(libs.mockk.main)
 }

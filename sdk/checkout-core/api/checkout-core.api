@@ -4,13 +4,27 @@ public final class com/caribeanroyal/ecommercesample/sdk/checkout/core/AdyenProc
 	public fun processPayment (DLjava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
+public abstract interface class com/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutAnalytics {
+	public abstract fun logError (Ljava/lang/Throwable;Ljava/lang/String;)V
+	public abstract fun logEvent (Ljava/lang/String;Ljava/util/Map;)V
+}
+
+public final class com/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutAnalytics$DefaultImpls {
+	public static synthetic fun logEvent$default (Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutAnalytics;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)V
+}
+
 public final class com/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutSdk {
 	public fun <init> (Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/PaymentProcessor;)V
-	public synthetic fun <init> (Ljava/util/List;Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/lang/String;ZLcom/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutAnalytics;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun executeCheckout (DLjava/lang/String;Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/PaymentProcessorType;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun executeCheckout (DLjava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getAnalytics ()Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutAnalytics;
+	public final fun getDebuggable ()Z
 	public final fun getEnabledProcessors ()Ljava/util/List;
 	public final fun getEnvironment ()Ljava/lang/String;
+	public final fun logError (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public static synthetic fun logError$default (Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutSdk;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;ILjava/lang/Object;)V
+	public final fun logEvent (Ljava/lang/String;Ljava/lang/String;)V
 	public final fun submitPayment (DLjava/lang/String;Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/PaymentProcessorType;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
@@ -18,6 +32,8 @@ public final class com/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutS
 	public fun <init> ()V
 	public final fun build ()Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutSdk;
 	public final fun enableProcessors (Ljava/util/List;)Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutSdk$Builder;
+	public final fun setAnalytics (Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutAnalytics;)Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutSdk$Builder;
+	public final fun setDebuggable (Z)Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutSdk$Builder;
 	public final fun setEnvironment ()Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutSdk$Builder;
 	public final fun setEnvironment (Ljava/lang/String;)Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutSdk$Builder;
 	public static synthetic fun setEnvironment$default (Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutSdk$Builder;Ljava/lang/String;ILjava/lang/Object;)Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutSdk$Builder;

@@ -1,8 +1,11 @@
 package com.caribeanroyal.ecommercesample.sdk.checkout.core
 
+import androidx.annotation.Keep
+
 /**
  * Enum defining the built-in payment processors supported by the SDK.
  */
+@Keep
 enum class PaymentProcessorType(val displayName: String) {
     ADYEN("Adyen"),
     STRIPE("Stripe"),
@@ -12,6 +15,7 @@ enum class PaymentProcessorType(val displayName: String) {
 /**
  * Strategy interface defining the contract for processing payments within the SDK.
  */
+@Keep
 interface PaymentProcessor {
     val type: PaymentProcessorType
     

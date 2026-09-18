@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import android.util.Log
 
 class CheckoutViewModel(
     private val sdkEngine: CheckoutSdk
@@ -70,6 +71,8 @@ class CheckoutViewModel(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
             
+            sdkEngine.logEvent("CheckoutViewModel", "Starting payment process for ${intent.amount} ${intent.currency}")
+            
             try {
                 val success = sdkEngine.submitPayment( // Using deprecated method as requested
                     amount = intent.amount,
@@ -78,11 +81,14 @@ class CheckoutViewModel(
                 )
                 
                 if (success) {
+                    sdkEngine.logEvent("CheckoutViewModel", "Payment succeeded")
                     _state.update { it.copy(isLoading = false, isSuccess = true) }
                 } else {
+                    sdkEngine.logError("CheckoutViewModel", "Payment failed")
                     _state.update { it.copy(isLoading = false, error = "Payment failed") }
                 }
             } catch (e: Exception) {
+                sdkEngine.logError("CheckoutViewModel", "Payment exception: ${e.message}", e)
                 _state.update { it.copy(isLoading = false, error = e.message) }
             }
         }

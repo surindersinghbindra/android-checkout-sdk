@@ -1,6 +1,8 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 package com.caribeanroyal.ecommercesample.sdk.checkout.ui
 
+import androidx.annotation.Keep
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
@@ -48,6 +50,7 @@ fun rememberCheckoutSteps(config: CheckoutStepsConfig): List<CheckoutStepType> {
 }
 
 
+@Keep
 @Composable
 fun CheckoutScreen(
     amount: Double,
