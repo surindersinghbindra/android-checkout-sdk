@@ -98,6 +98,7 @@ class MainActivity : ComponentActivity() {
                                 currency = currency,
                                 orderTitle = title,
                                 orderDescription = desc,
+                                onCheckoutSuccess = { navController.popBackStack("booking", inclusive = false) },
                                 onBack = { navController.popBackStack() }
                             )
                         }
@@ -115,7 +116,8 @@ fun CustomHeadlessCheckoutScreen(
     currency: String,
     orderTitle: String,
     orderDescription: String,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onCheckoutSuccess: () -> Unit = onBack
 ) {
     val coroutineScope = rememberCoroutineScope()
     var status by remember { mutableStateOf("Ready to pay") }
@@ -156,7 +158,7 @@ fun CustomHeadlessCheckoutScreen(
         } else if (status == "Payment Successful!") {
             Text("Payment Successful!", color = Color(0xFF4CAF50), style = MaterialTheme.typography.headlineMedium)
             Spacer(modifier = Modifier.height(24.dp))
-            Button(onClick = onBack) {
+            Button(onClick = onCheckoutSuccess) {
                 Text("Explore More")
             }
         } else {
@@ -203,7 +205,7 @@ fun CustomHeadlessCheckoutScreen(
             
             Spacer(modifier = Modifier.height(16.dp))
             
-            TextButton(onClick = onBack) {
+            TextButton(onClick = onCheckoutSuccess) {
                 Text("Go Back")
             }
         }

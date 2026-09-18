@@ -92,6 +92,9 @@ fun AppNavigation(
                     showPartySize = true,
                     showRoomSelection = true
                 ),
+                onCheckoutSuccess = {
+                    navController.popBackStack<Screen.Booking>(inclusive = false)
+                },
                 onNavigateBack = {
                     navController.popBackStack()
                 }

@@ -58,6 +58,7 @@ fun CheckoutScreen(
     themeConfig: CheckoutThemeConfig,
     stepsConfig: CheckoutStepsConfig = CheckoutStepsConfig(),
     onNavigateBack: () -> Unit,
+    onCheckoutSuccess: () -> Unit = onNavigateBack,
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.state.collectAsState()
@@ -173,7 +174,7 @@ fun CheckoutScreen(
                             CheckoutStepType.EXTRAS -> AddonsStep(state, viewModel)
                             CheckoutStepType.REVIEW -> ReviewStep(state, orderTitle, orderDescription)
                             CheckoutStepType.GUEST_INFO -> GuestInfoStep(state, viewModel)
-                            CheckoutStepType.PAY -> PayStep(state, orderTitle, orderDescription, themeConfig, onNavigateBack)
+                            CheckoutStepType.PAY -> PayStep(state, orderTitle, orderDescription, themeConfig, onCheckoutSuccess)
                             null -> {}
                         }
                     }
