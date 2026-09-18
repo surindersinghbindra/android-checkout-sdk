@@ -15,11 +15,10 @@ fun NavGraphBuilder.bookingGraph(
 
 
         BookingScreen(
-            
+
             onNavigateToCruiseDetail = { packageCode ->
                 navController.navigate(Screen.CruiseDetail(packageCode = packageCode))
-            }
-        )
+            })
     }
 
     composable<Screen.CruiseDetail> { backStackEntry ->
@@ -27,7 +26,7 @@ fun NavGraphBuilder.bookingGraph(
 
         CruiseDetailScreen(
             packageCode = detailRoute.packageCode,
-            
+
             onNavigateBack = { navController.popBackStack() },
             onNavigateToCheckout = { price, currency, title, desc ->
                 navController.navigate(
@@ -38,7 +37,6 @@ fun NavGraphBuilder.bookingGraph(
                         orderDescription = desc
                     )
                 )
-            }
-        )
+            })
     }
 }

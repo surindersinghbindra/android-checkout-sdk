@@ -1,6 +1,11 @@
 package com.caribeanroyal.ecommercesample.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import com.caribeanroyal.ecommercesample.feature.booking.di.BookingComponentProvider
+import com.caribeanroyal.ecommercesample.feature.booking.di.LocalBookingViewModelFactory
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavHostController
@@ -19,7 +24,15 @@ fun ECommerceApp(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController()
 ) {
-    NavHost(
+    val context = LocalContext.current
+    val bookingFactory = remember { 
+        (context.applicationContext as BookingComponentProvider).bookingViewModelFactory() 
+    }
+
+    CompositionLocalProvider(
+        LocalBookingViewModelFactory provides bookingFactory
+    ) {
+        NavHost(
         navController = navController,
         startDestination = Screen.Splash,
         modifier = modifier
@@ -43,5 +56,6 @@ fun ECommerceApp(
             checkoutSdk = checkoutSdk,
             checkoutThemeConfig = checkoutThemeConfig
         )
+    }
     }
 }

@@ -17,7 +17,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.platform.LocalContext
-import com.caribeanroyal.ecommercesample.feature.booking.di.BookingComponentProvider
+import com.caribeanroyal.ecommercesample.feature.booking.di.LocalBookingViewModelFactory
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,11 +36,8 @@ fun CruiseDetailScreen(
     onNavigateBack: () -> Unit,
     onNavigateToCheckout: (Double, String, String, String) -> Unit
 ) {
-    val context = LocalContext.current
-    val factory = remember { 
-        (context.applicationContext as BookingComponentProvider).bookingViewModelFactory() 
-    }
-    val viewModel: BookingViewModel = viewModel(factory = factory)
+
+    val viewModel: BookingViewModel = viewModel(factory = LocalBookingViewModelFactory.current)
     val state by viewModel.state.collectAsState()
     var isIncludedExpanded by remember { mutableStateOf(true) }
 
