@@ -79,10 +79,11 @@ class CheckoutViewModel(
             sdkEngine.logEvent("CheckoutViewModel", "Starting payment process for ${intent.amount} ${intent.currency}")
             
             try {
-                val success = sdkEngine.submitPayment( // Using deprecated method as requested
+                val success = sdkEngine.executeCheckout(
                     amount = intent.amount,
                     currency = intent.currency,
-                    processorType = intent.processor.type
+                    processorType = intent.processor.type,
+                    idempotencyKey = sessionKey
                 )
                 
                 if (success) {
@@ -92,6 +93,9 @@ class CheckoutViewModel(
                     sdkEngine.logError("CheckoutViewModel", "Payment failed")
                     _state.update { it.copy(isLoading = false, error = "Payment failed") }
                 }
+            } catch (e: AlreadyProcessedException) {
+                sdkEngine.logError("CheckoutViewModel", "Payment already processed")
+                _state.update { it.copy(isLoading = false, error = "This order has already been placed.") }
             } catch (e: Exception) {
                 sdkEngine.logError("CheckoutViewModel", "Payment exception: ${e.message}", e)
                 _state.update { it.copy(isLoading = false, error = e.message) }
