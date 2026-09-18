@@ -1,6 +1,7 @@
 package com.caribeanroyal.ecommercesample.feature.booking.viewmodel
 
 import androidx.lifecycle.ViewModel
+import javax.inject.Inject
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.caribeanroyal.ecommercesample.core.domain.usecase.SearchCruisesUseCase
@@ -35,7 +36,7 @@ class BookingViewModel(
     }
 }
 
-class BookingViewModelFactory(
+class BookingViewModelFactory @Inject constructor(
     private val searchCruisesUseCase: SearchCruisesUseCase
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

@@ -7,6 +7,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.platform.LocalContext
+import com.caribeanroyal.ecommercesample.feature.booking.di.BookingComponentProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -18,9 +21,13 @@ import com.caribeanroyal.ecommercesample.feature.booking.viewmodel.BookingViewMo
 
 @Composable
 fun BookingScreen(
-    viewModel: BookingViewModel,
     onNavigateToCruiseDetail: (String) -> Unit
 ) {
+    val context = LocalContext.current
+    val factory = remember { 
+        (context.applicationContext as BookingComponentProvider).bookingViewModelFactory() 
+    }
+    val viewModel: BookingViewModel = viewModel(factory = factory)
     val state by viewModel.state.collectAsState()
 
     Scaffold(

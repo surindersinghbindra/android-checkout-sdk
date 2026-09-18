@@ -35,8 +35,7 @@ fun ECommerceApp(
         }
 
         bookingGraph(
-            navController = navController,
-            viewModelStoreOwner = viewModelStoreOwner
+            navController = navController
         )
 
         checkoutGraph(

@@ -17,6 +17,7 @@ interface AppComponent {
 
     fun getCruiseItineraryUseCase(): GetCruiseItineraryUseCase
     fun searchCruisesUseCase(): SearchCruisesUseCase
+    fun bookingViewModelFactory(): com.caribeanroyal.ecommercesample.feature.booking.viewmodel.BookingViewModelFactory
 
     @Component.Factory
     interface Factory {

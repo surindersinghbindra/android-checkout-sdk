@@ -33,8 +33,7 @@ fun ECommerceHeadlessApp(
         }
 
         bookingGraph(
-            navController = navController,
-            viewModelStoreOwner = viewModelStoreOwner
+            navController = navController
         )
 
         checkoutGraph(

@@ -4,7 +4,9 @@ import android.app.Application
 import com.caribeanroyal.headless.di.AppComponent
 import com.caribeanroyal.headless.di.DaggerAppComponent
 
-class HeadlessApp : Application() {
+import com.caribeanroyal.ecommercesample.feature.booking.di.BookingComponentProvider
+
+class HeadlessApp : Application(), BookingComponentProvider {
     lateinit var appComponent: AppComponent
         private set
 
@@ -12,4 +14,6 @@ class HeadlessApp : Application() {
         super.onCreate()
         appComponent = DaggerAppComponent.factory().create(this)
     }
+
+    override fun bookingViewModelFactory() = appComponent.bookingViewModelFactory()
 }
