@@ -105,6 +105,7 @@ class CheckoutSdk private constructor(
         if (debuggable) {
             println("[$tag] $message")
         }
+        analytics?.logEvent(message, mapOf("tag" to tag))
     }
 
     fun logError(tag: String, message: String, throwable: Throwable? = null) {

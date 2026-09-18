@@ -45,7 +45,7 @@ fun CustomHeadlessCheckoutScreen(
 ) {
     val coroutineScope = rememberCoroutineScope()
     var status by remember { mutableStateOf("Ready to pay") }
-    val sessionKey = remember { "UUID.randomUUID().toString()" }
+    val sessionKey = remember { UUID.randomUUID().toString() }
     var isProcessing by remember { mutableStateOf(false) }
     
     var expanded by remember { mutableStateOf(false) }
@@ -120,6 +120,7 @@ fun CustomHeadlessCheckoutScreen(
                                 val result = sdkEngine.executeCheckout(amount, currency, processor, sessionKey)
                                 status = if (result) "Payment Successful!" else "Payment Failed."
                             } catch (e: AlreadyProcessedException) {
+                                sdkEngine.logEvent("CustomHeadless", "Payment already processed (Idempotency key matched)")
                                 status = "This order has already been placed."
                             } catch (e: Exception) {
                                 status = "Payment Error: ${e.message}"
