@@ -57,7 +57,7 @@ class MainActivity : ComponentActivity() {
             }
         }
         
-        val sdkEngine = CheckoutSdk.Builder()
+        val sdkEngine = CheckoutSdk.Builder(applicationContext)
             .enableProcessors(listOf(PaymentProcessorType.ADYEN, PaymentProcessorType.STRIPE, PaymentProcessorType.FAIL_SIMULATOR))
             .setEnvironment("staging")
             .setDebuggable(true)

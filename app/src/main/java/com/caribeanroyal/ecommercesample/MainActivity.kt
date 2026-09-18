@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
         }
         
         // Demonstrated Aggregator Pattern: SDK handles the processors internally!
-        val checkoutSdk = CheckoutSdk.Builder()
+        val checkoutSdk = CheckoutSdk.Builder(applicationContext)
             .enableProcessors(listOf(PaymentProcessorType.ADYEN, PaymentProcessorType.STRIPE, PaymentProcessorType.FAIL_SIMULATOR))
             .setEnvironment("staging")
             .setDebuggable(true)

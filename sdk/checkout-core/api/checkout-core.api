@@ -18,8 +18,7 @@ public final class com/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutA
 }
 
 public final class com/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutSdk {
-	public fun <init> (Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/PaymentProcessor;)V
-	public synthetic fun <init> (Ljava/util/List;Ljava/lang/String;ZLcom/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutAnalytics;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/lang/String;ZLcom/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutAnalytics;Landroid/content/Context;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun executeCheckout (DLjava/lang/String;Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/PaymentProcessorType;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun executeCheckout (DLjava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun executeCheckout$default (Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutSdk;DLjava/lang/String;Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/PaymentProcessorType;Ljava/lang/String;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
@@ -35,7 +34,7 @@ public final class com/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutS
 }
 
 public final class com/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutSdk$Builder {
-	public fun <init> ()V
+	public fun <init> (Landroid/content/Context;)V
 	public final fun build ()Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutSdk;
 	public final fun enableProcessors (Ljava/util/List;)Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutSdk$Builder;
 	public final fun setAnalytics (Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutAnalytics;)Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutSdk$Builder;
@@ -76,5 +75,51 @@ public final class com/caribeanroyal/ecommercesample/sdk/checkout/core/StripePro
 	public fun <init> ()V
 	public fun getType ()Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/PaymentProcessorType;
 	public fun processPayment (DLjava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract class com/caribeanroyal/ecommercesample/sdk/checkout/core/db/CheckoutDatabase : androidx/room/RoomDatabase {
+	public fun <init> ()V
+	public abstract fun idempotencyDao ()Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/db/IdempotencyDao;
+}
+
+public final class com/caribeanroyal/ecommercesample/sdk/checkout/core/db/CheckoutDatabase_Impl : com/caribeanroyal/ecommercesample/sdk/checkout/core/db/CheckoutDatabase {
+	public fun <init> ()V
+	public fun clearAllTables ()V
+	public fun getAutoMigrations (Ljava/util/Map;)Ljava/util/List;
+	public fun getRequiredAutoMigrationSpecs ()Ljava/util/Set;
+	public fun idempotencyDao ()Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/db/IdempotencyDao;
+}
+
+public final class com/caribeanroyal/ecommercesample/sdk/checkout/core/db/CheckoutSdkInitializer : androidx/startup/Initializer {
+	public fun <init> ()V
+	public fun create (Landroid/content/Context;)Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/db/CheckoutDatabase;
+	public synthetic fun create (Landroid/content/Context;)Ljava/lang/Object;
+	public fun dependencies ()Ljava/util/List;
+}
+
+public abstract interface class com/caribeanroyal/ecommercesample/sdk/checkout/core/db/IdempotencyDao {
+	public abstract fun exists (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun insertKey (Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/db/IdempotencyEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/caribeanroyal/ecommercesample/sdk/checkout/core/db/IdempotencyDao_Impl : com/caribeanroyal/ecommercesample/sdk/checkout/core/db/IdempotencyDao {
+	public fun <init> (Landroidx/room/RoomDatabase;)V
+	public fun exists (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun getRequiredConverters ()Ljava/util/List;
+	public fun insertKey (Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/db/IdempotencyEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/caribeanroyal/ecommercesample/sdk/checkout/core/db/IdempotencyEntity {
+	public fun <init> (Ljava/lang/String;J)V
+	public synthetic fun <init> (Ljava/lang/String;JILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()J
+	public final fun copy (Ljava/lang/String;J)Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/db/IdempotencyEntity;
+	public static synthetic fun copy$default (Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/db/IdempotencyEntity;Ljava/lang/String;JILjava/lang/Object;)Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/db/IdempotencyEntity;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getIdempotencyKey ()Ljava/lang/String;
+	public final fun getTimestamp ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 

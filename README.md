@@ -51,6 +51,33 @@ The SDK engine now natively guards against double-charging via Idempotency Keys.
 3. If the user accidentally double-taps or a network retry happens, the SDK core will intercept the identical key, prevent the charge, and throw an `AlreadyProcessedException`.
 4. The `CheckoutViewModel` catches this and smoothly updates the UI to show: *"This order has already been placed."*
 
+
+### Deferred Jetpack App Startup & Room DB
+To ensure the SDK does not bloat the host app's Time-To-Interactive (TTI) during cold starts, the SDK integrates **Jetpack App Startup** but recommends a deferred initialization strategy. 
+
+The SDK internally provides `CheckoutSdkInitializer`, which provisions the internal Room Database for idempotency keys. Host apps are configured to intentionally disable auto-initialization via Manifest merging:
+
+```xml
+<provider
+    android:name="androidx.startup.InitializationProvider"
+    android:authorities="${applicationId}.androidx-startup"
+    android:exported="false"
+    tools:node="merge">
+    
+    <!-- Explicitly disable the specific SDK initializer -->
+    <meta-data
+        android:name="com.caribeanroyal.ecommercesample.sdk.checkout.core.db.CheckoutSdkInitializer"
+        tools:node="remove" />
+</provider>
+```
+
+When the user actively enters the Checkout Flow (e.g. inside `CheckoutGraph.kt`), the host app manually initializes the component Just-In-Time:
+```kotlin
+AppInitializer.getInstance(context)
+    .initializeComponent(CheckoutSdkInitializer::class.java)
+```
+This is a highly recommended best practice for SDKs requiring heavyweight components like Room.
+
 ### Deprecations
 - **`submitPayment()`**: As of recent updates, `submitPayment(amount, currency, processorType)` has been marked as `@Deprecated`. Please migrate directly to `executeCheckout(...)`. The old method is retained purely for backwards compatibility and demonstration of our API deprecation strategy.
 

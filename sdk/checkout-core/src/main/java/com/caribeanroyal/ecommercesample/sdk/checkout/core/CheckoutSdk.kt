@@ -1,6 +1,11 @@
 package com.caribeanroyal.ecommercesample.sdk.checkout.core
 
 import androidx.annotation.Keep
+import android.content.Context
+import androidx.startup.AppInitializer
+import com.caribeanroyal.ecommercesample.sdk.checkout.core.db.CheckoutSdkInitializer
+import com.caribeanroyal.ecommercesample.sdk.checkout.core.db.CheckoutDatabase
+import com.caribeanroyal.ecommercesample.sdk.checkout.core.db.IdempotencyEntity
 
 /**
  * Headless entry point for the Checkout SDK business logic.
@@ -10,17 +15,19 @@ class CheckoutSdk private constructor(
     val enabledProcessors: List<PaymentProcessor>,
     val environment: String,
     val debuggable: Boolean,
-    val analytics: CheckoutAnalytics?
+    val analytics: CheckoutAnalytics?,
+    private val context: Context
 ) {
 
-    private val processedKeys = mutableSetOf<String>()
+    private val database: CheckoutDatabase by lazy {
+        AppInitializer.getInstance(context).initializeComponent(CheckoutSdkInitializer::class.java)
+    }
 
 
-    @Deprecated("Use Builder and enableProcessors instead")
-    constructor(paymentProcessor: PaymentProcessor) : this(listOf(paymentProcessor), "production", false, null)
+    
 
     @Keep
-    class Builder {
+    class Builder(private val context: Context) {
         private val enabledProcessors = mutableListOf<PaymentProcessor>()
         private var environment: String = "production"
         private var debuggable: Boolean = false
@@ -53,7 +60,7 @@ class CheckoutSdk private constructor(
             if (enabledProcessors.isEmpty()) {
                 throw IllegalStateException("At least one PaymentProcessorType must be enabled.")
             }
-            return CheckoutSdk(enabledProcessors, environment, debuggable, analytics)
+            return CheckoutSdk(enabledProcessors, environment, debuggable, analytics, context.applicationContext)
         }
     }
 
@@ -69,7 +76,7 @@ class CheckoutSdk private constructor(
      * Executes the checkout flow using the specified processor.
      */
     suspend fun executeCheckout(amount: Double, currency: String, processorType: PaymentProcessorType, idempotencyKey: String? = null): Boolean {
-        if (idempotencyKey != null && processedKeys.contains(idempotencyKey)) {
+        if (idempotencyKey != null && database.idempotencyDao().exists(idempotencyKey) > 0) {
             throw AlreadyProcessedException("Order already processed")
         }
         val processor = enabledProcessors.find { it.type == processorType } 
@@ -77,20 +84,20 @@ class CheckoutSdk private constructor(
         
         val success = processor.processPayment(amount, currency, idempotencyKey)
         if (success && idempotencyKey != null) {
-            processedKeys.add(idempotencyKey)
+            database.idempotencyDao().insertKey(IdempotencyEntity(idempotencyKey))
         }
         return success
     }
     
     @Deprecated("Use executeCheckout with PaymentProcessorType instead")
     suspend fun executeCheckout(amount: Double, currency: String, idempotencyKey: String? = null): Boolean {
-        if (idempotencyKey != null && processedKeys.contains(idempotencyKey)) {
+        if (idempotencyKey != null && database.idempotencyDao().exists(idempotencyKey) > 0) {
             throw AlreadyProcessedException("Order already processed")
         }
         if (enabledProcessors.isEmpty()) return false
         val success = enabledProcessors.first().processPayment(amount, currency, idempotencyKey)
         if (success && idempotencyKey != null) {
-            processedKeys.add(idempotencyKey)
+            database.idempotencyDao().insertKey(IdempotencyEntity(idempotencyKey))
         }
         return success
     }
