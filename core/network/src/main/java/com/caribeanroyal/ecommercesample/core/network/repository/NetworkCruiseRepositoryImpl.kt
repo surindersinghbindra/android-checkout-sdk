@@ -22,4 +22,15 @@ class NetworkCruiseRepositoryImpl @Inject constructor(
             }
         }
     }
+    
+    override suspend fun searchCruises(): Result<List<CruiseItinerary>> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val cruises = apiService.searchCruises()
+                Result.success(cruises)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+    }
 }

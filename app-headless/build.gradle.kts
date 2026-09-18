@@ -33,7 +33,7 @@ android {
 dependencies {
     // ONLY DEPEND ON THE HEADLESS CORE SDK!
     // No dependency on checkout-ui.
-    implementation(project(":sdk:checkout-core"))
+    implementation("com.caribeanroyal.ecommercesample:checkout-core:1.0.0-SNAPSHOT")
     
     // Add feature:booking to show the booking screen
     implementation(project(":feature:booking"))

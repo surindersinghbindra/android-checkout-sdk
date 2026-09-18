@@ -2,7 +2,7 @@ package com.caribeanroyal.ecommercesample.feature.booking.viewmodel
 
 import app.cash.turbine.test
 import com.caribeanroyal.ecommercesample.core.domain.model.CruiseItinerary
-import com.caribeanroyal.ecommercesample.core.domain.usecase.GetCruiseItineraryUseCase
+import com.caribeanroyal.ecommercesample.core.domain.usecase.SearchCruisesUseCase
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -21,13 +21,13 @@ import org.junit.Test
 class BookingViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
-    private lateinit var getCruiseItineraryUseCase: GetCruiseItineraryUseCase
+    private lateinit var searchCruisesUseCase: SearchCruisesUseCase
     private lateinit var viewModel: BookingViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        getCruiseItineraryUseCase = mockk()
+        searchCruisesUseCase = mockk()
     }
 
     @After
@@ -37,9 +37,9 @@ class BookingViewModelTest {
 
     @Test
     fun `when initialization starts, state is Loading`() = runTest {
-        coEvery { getCruiseItineraryUseCase(any()) } returns Result.success(mockItinerary)
+        coEvery { searchCruisesUseCase() } returns Result.success(listOf(mockItinerary))
 
-        viewModel = BookingViewModel(getCruiseItineraryUseCase)
+        viewModel = BookingViewModel(searchCruisesUseCase)
 
         viewModel.state.test {
             val initialState = awaitItem()
@@ -50,24 +50,24 @@ class BookingViewModelTest {
 
     @Test
     fun `when use case succeeds, state becomes Success`() = runTest {
-        coEvery { getCruiseItineraryUseCase(any()) } returns Result.success(mockItinerary)
+        coEvery { searchCruisesUseCase() } returns Result.success(listOf(mockItinerary))
 
-        viewModel = BookingViewModel(getCruiseItineraryUseCase)
+        viewModel = BookingViewModel(searchCruisesUseCase)
 
         viewModel.state.test {
             awaitItem() // Loading
             val successState = awaitItem() as BookingState.Success
-            assertEquals("7 Night Greek Isles Cruise", successState.itinerary.title)
-            assertEquals(1328.0, successState.finalPrice, 0.0)
+            assertEquals(1, successState.itineraries.size)
+            assertEquals("7 Night Greek Isles Cruise", successState.itineraries[0].title)
             cancelAndIgnoreRemainingEvents()
         }
     }
 
     @Test
     fun `when use case fails, state becomes Error`() = runTest {
-        coEvery { getCruiseItineraryUseCase(any()) } returns Result.failure(Exception("Network error"))
+        coEvery { searchCruisesUseCase() } returns Result.failure(Exception("Network error"))
 
-        viewModel = BookingViewModel(getCruiseItineraryUseCase)
+        viewModel = BookingViewModel(searchCruisesUseCase)
 
         viewModel.state.test {
             awaitItem() // Loading
@@ -84,6 +84,7 @@ class BookingViewModelTest {
         sailDate = "24 Oct 2027",
         basePrice = 1328.0,
         currency = "GBP",
+        imageUrl = "",
         days = emptyList()
     )
 }

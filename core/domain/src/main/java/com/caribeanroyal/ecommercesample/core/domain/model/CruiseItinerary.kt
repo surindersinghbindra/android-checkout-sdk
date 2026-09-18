@@ -7,6 +7,7 @@ data class CruiseItinerary(
     val sailDate: String,
     val basePrice: Double,
     val currency: String,
+    val imageUrl: String = "",
     val days: List<CruiseDay>
 )
 

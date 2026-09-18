@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         
         val appComponent = DaggerAppComponent.factory().create(applicationContext)
-        val getCruiseItineraryUseCase = appComponent.getCruiseItineraryUseCase()
+        val searchCruisesUseCase = appComponent.searchCruisesUseCase()
         
         // Demonstrated Aggregator Pattern: SDK handles the processors internally!
         val checkoutSdk = CheckoutSdk.Builder()
@@ -37,7 +37,8 @@ class MainActivity : ComponentActivity() {
         val sdkThemeConfig = CheckoutThemeConfig(
             primaryColor = BrandPrimary,
             secondaryColor = BrandSecondary,
-            buttonCornerRadiusDp = 12
+            buttonCornerRadiusDp = 12,
+            showExploreMoreButton = false,
         )
 
         setContent {
@@ -50,7 +51,7 @@ class MainActivity : ComponentActivity() {
                         checkoutSdk = checkoutSdk,
                         checkoutThemeConfig = sdkThemeConfig,
                         viewModelStoreOwner = this,
-                        getCruiseItineraryUseCase = getCruiseItineraryUseCase
+                        searchCruisesUseCase = searchCruisesUseCase
                     )
                 }
             }

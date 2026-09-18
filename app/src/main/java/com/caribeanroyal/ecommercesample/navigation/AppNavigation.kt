@@ -17,16 +17,17 @@ import com.caribeanroyal.ecommercesample.sdk.checkout.ui.CheckoutViewModelFactor
 
 import androidx.navigation.toRoute
 
-import com.caribeanroyal.ecommercesample.core.domain.usecase.GetCruiseItineraryUseCase
+import com.caribeanroyal.ecommercesample.core.domain.usecase.SearchCruisesUseCase
 import com.caribeanroyal.ecommercesample.feature.booking.viewmodel.BookingViewModel
 import com.caribeanroyal.ecommercesample.feature.booking.viewmodel.BookingViewModelFactory
+import com.caribeanroyal.ecommercesample.sdk.checkout.ui.CheckoutStepsConfig
 
 @Composable
 fun AppNavigation(
     checkoutSdk: CheckoutSdk,
     checkoutThemeConfig: CheckoutThemeConfig,
     viewModelStoreOwner: ViewModelStoreOwner,
-    getCruiseItineraryUseCase: GetCruiseItineraryUseCase,
+    searchCruisesUseCase: SearchCruisesUseCase,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController()
 ) {
@@ -36,31 +37,35 @@ fun AppNavigation(
         modifier = modifier
     ) {
         composable<Screen.Booking> { backStackEntry ->
-            val factory = BookingViewModelFactory(getCruiseItineraryUseCase)
-            val bookingViewModel = ViewModelProvider(backStackEntry, factory)[BookingViewModel::class.java]
-            
+            val factory = BookingViewModelFactory(searchCruisesUseCase)
+            val bookingViewModel =
+                ViewModelProvider(backStackEntry, factory)[BookingViewModel::class.java]
+
             BookingScreen(
                 viewModel = bookingViewModel,
                 onNavigateToCheckout = { price, currency, title, desc ->
-                    navController.navigate(Screen.Checkout(
-                        price = price, 
-                        currency = currency,
-                        orderTitle = title,
-                        orderDescription = desc
-                    ))
+                    navController.navigate(
+                        Screen.Checkout(
+                            price = price,
+                            currency = currency,
+                            orderTitle = title,
+                            orderDescription = desc
+                        )
+                    )
                 }
             )
         }
-        
+
         composable<Screen.Checkout> { backStackEntry ->
             val checkoutRoute = backStackEntry.toRoute<Screen.Checkout>()
             // We can now use checkoutRoute.price and checkoutRoute.currency if the SDK supported it!
-            
+
             // Instantiate the SDK's ViewModel scoped to THIS specific navigation entry,
             // so returning to this screen creates a fresh state instead of the old success state.
             val factory = CheckoutViewModelFactory(checkoutSdk)
-            val checkoutViewModel = ViewModelProvider(backStackEntry, factory)[CheckoutViewModel::class.java]
-            
+            val checkoutViewModel =
+                ViewModelProvider(backStackEntry, factory)[CheckoutViewModel::class.java]
+
             CheckoutScreen(
                 amount = checkoutRoute.price,
                 currency = checkoutRoute.currency,
@@ -68,6 +73,11 @@ fun AppNavigation(
                 orderDescription = checkoutRoute.orderDescription,
                 viewModel = checkoutViewModel,
                 themeConfig = checkoutThemeConfig,
+                stepsConfig = CheckoutStepsConfig(
+                    showExtras = true, // Hides the drink/wifi package screen
+                    showPartySize = true, // Hardcodes party size to 1 if skipped
+                    showRoomSelection = true
+                ),
                 onNavigateBack = {
                     navController.popBackStack()
                 }

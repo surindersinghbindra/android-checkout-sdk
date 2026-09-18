@@ -7,7 +7,7 @@ sealed class CheckoutIntent {
     data class SubmitPayment(val amount: Double, val currency: String, val processor: PaymentProcessor) : CheckoutIntent()
     
     // Booking Wizard Intents
-    object NextStep : CheckoutIntent()
+    data class NextStep(val maxStep: Int) : CheckoutIntent()
     object PreviousStep : CheckoutIntent()
     data class UpdatePartySize(val size: Int) : CheckoutIntent()
     data class SelectRoom(val type: String) : CheckoutIntent()

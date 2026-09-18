@@ -9,5 +9,7 @@ import androidx.compose.ui.graphics.Color
 data class CheckoutThemeConfig @JvmOverloads constructor(
     val primaryColor: Color = Color(0xFF6200EE),
     val secondaryColor: Color = Color(0xFF03DAC5),
-    val buttonCornerRadiusDp: Int = 8
+    val buttonCornerRadiusDp: Int = 8,
+    val showExploreMoreButton: Boolean = true,
+    val dummyFlag: Boolean = false
 )

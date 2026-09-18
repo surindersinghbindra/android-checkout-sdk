@@ -26,7 +26,7 @@ class CheckoutViewModel(
             is CheckoutIntent.LoadProcessors -> loadProcessors()
             is CheckoutIntent.SubmitPayment -> processPayment(intent)
             is CheckoutIntent.NextStep -> {
-                _state.update { it.copy(currentStep = minOf(it.currentStep + 1, 5)) }
+                _state.update { it.copy(currentStep = minOf(it.currentStep + 1, intent.maxStep)) }
             }
             is CheckoutIntent.PreviousStep -> {
                 _state.update { it.copy(currentStep = maxOf(it.currentStep - 1, 0)) }

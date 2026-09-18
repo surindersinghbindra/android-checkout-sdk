@@ -8,6 +8,7 @@ import dagger.Component
 import javax.inject.Singleton
 
 import com.caribeanroyal.ecommercesample.core.domain.usecase.GetCruiseItineraryUseCase
+import com.caribeanroyal.ecommercesample.core.domain.usecase.SearchCruisesUseCase
 import com.caribeanroyal.ecommercesample.core.network.di.RepositoryModule
 
 @Singleton
@@ -15,6 +16,7 @@ import com.caribeanroyal.ecommercesample.core.network.di.RepositoryModule
 interface AppComponent {
 
     fun getCruiseItineraryUseCase(): GetCruiseItineraryUseCase
+    fun searchCruisesUseCase(): SearchCruisesUseCase
 
     @Component.Factory
     interface Factory {

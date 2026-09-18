@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.caribeanroyal.ecommercesample.core.domain.usecase.GetCruiseItineraryUseCase
+import com.caribeanroyal.ecommercesample.core.domain.usecase.SearchCruisesUseCase
 import com.caribeanroyal.ecommercesample.core.network.api.CruiseApiService
 import com.caribeanroyal.ecommercesample.core.network.interceptor.MockCruiseInterceptor
 import com.caribeanroyal.ecommercesample.core.network.repository.NetworkCruiseRepositoryImpl
@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
             
         val apiService = retrofit.create(CruiseApiService::class.java)
         val repository = NetworkCruiseRepositoryImpl(apiService)
-        val getCruiseItineraryUseCase = GetCruiseItineraryUseCase(repository)
+        val searchCruisesUseCase = SearchCruisesUseCase(repository)
 
         // Initialize ONLY the Core SDK with built-in processors
         val sdkEngine = CheckoutSdk.Builder()
@@ -61,7 +61,7 @@ class MainActivity : ComponentActivity() {
                     
                     NavHost(navController = navController, startDestination = "booking") {
                         composable("booking") { backStackEntry ->
-                            val factory = BookingViewModelFactory(getCruiseItineraryUseCase)
+                            val factory = BookingViewModelFactory(searchCruisesUseCase)
                             val bookingViewModel = ViewModelProvider(backStackEntry, factory)[BookingViewModel::class.java]
                             
                             BookingScreen(
@@ -143,6 +143,12 @@ fun CustomHeadlessCheckoutScreen(
         
         if (isProcessing) {
             CircularProgressIndicator()
+        } else if (status == "Payment Successful!") {
+            Text("Payment Successful!", color = Color(0xFF4CAF50), style = MaterialTheme.typography.headlineMedium)
+            Spacer(modifier = Modifier.height(24.dp))
+            Button(onClick = onBack) {
+                Text("Explore More")
+            }
         } else {
             if (selectedProcessor != null) {
                 Box {

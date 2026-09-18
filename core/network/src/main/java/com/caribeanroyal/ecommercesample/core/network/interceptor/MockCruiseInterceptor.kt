@@ -9,13 +9,61 @@ import okhttp3.ResponseBody.Companion.toResponseBody
 class MockCruiseInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
+        val path = request.url.encodedPath
         
-        // Only intercept itinerary requests
-        if (request.url.encodedPath.contains("v1/itinerary")) {
-            
-            // Simulate network latency
+        if (path.contains("v1/cruises")) {
             Thread.sleep(1000)
-            
+            val jsonResponse = """
+                [
+                    {
+                      "packageCode": "OY07M869",
+                      "title": "7 Night Greek Isles Cruise",
+                      "departurePort": "Rome, Italy",
+                      "sailDate": "2027-10-24",
+                      "basePrice": 711.50,
+                      "currency": "GBP",
+                      "imageUrl": "https://images.unsplash.com/photo-1549887552-cb1071d3e5a5?q=80&w=600&auto=format&fit=crop",
+                      "days": [
+                        { "dayNumber": 1, "location": "Rome, Italy", "isSeaDay": false }
+                      ]
+                    },
+                    {
+                      "packageCode": "SY07M542",
+                      "title": "7 Night Bahamas Cruise",
+                      "departurePort": "Miami, Florida",
+                      "sailDate": "2027-11-15",
+                      "basePrice": 599.00,
+                      "currency": "USD",
+                      "imageUrl": "https://images.unsplash.com/photo-1590523741831-ab7e8b8f9c7f?q=80&w=600&auto=format&fit=crop",
+                      "days": [
+                        { "dayNumber": 1, "location": "Miami, Florida", "isSeaDay": false }
+                      ]
+                    },
+                    {
+                      "packageCode": "WN07M123",
+                      "title": "7 Night Caribbean Cruise",
+                      "departurePort": "Orlando, Florida",
+                      "sailDate": "2027-12-05",
+                      "basePrice": 850.00,
+                      "currency": "USD",
+                      "imageUrl": "https://images.unsplash.com/photo-1499696956799-73e44af207c6?q=80&w=600&auto=format&fit=crop",
+                      "days": [
+                        { "dayNumber": 1, "location": "Orlando, Florida", "isSeaDay": false }
+                      ]
+                    }
+                ]
+            """.trimIndent()
+
+            return Response.Builder()
+                .code(200)
+                .message("OK")
+                .request(request)
+                .protocol(Protocol.HTTP_1_1)
+                .body(jsonResponse.toResponseBody("application/json".toMediaTypeOrNull()))
+                .addHeader("content-type", "application/json")
+                .build()
+        } else if (path.contains("v1/itinerary")) {
+            Thread.sleep(1000)
             val jsonResponse = """
                 {
                   "packageCode": "OY07M869",
@@ -24,15 +72,11 @@ class MockCruiseInterceptor : Interceptor {
                   "sailDate": "2027-10-24",
                   "basePrice": 711.50,
                   "currency": "GBP",
+                  "imageUrl": "https://images.unsplash.com/photo-1549887552-cb1071d3e5a5?q=80&w=600&auto=format&fit=crop",
                   "days": [
                     { "dayNumber": 1, "location": "Rome (Civitavecchia), Italy", "isSeaDay": false },
                     { "dayNumber": 2, "location": "Day at Sea", "isSeaDay": true },
-                    { "dayNumber": 3, "location": "Santorini, Greece", "isSeaDay": false },
-                    { "dayNumber": 4, "location": "Ephesus (Kusadasi), Turkey", "isSeaDay": false },
-                    { "dayNumber": 5, "location": "Mykonos, Greece", "isSeaDay": false },
-                    { "dayNumber": 6, "location": "Day at Sea", "isSeaDay": true },
-                    { "dayNumber": 7, "location": "Naples/Capri, Italy", "isSeaDay": false },
-                    { "dayNumber": 8, "location": "Rome (Civitavecchia), Italy", "isSeaDay": false }
+                    { "dayNumber": 3, "location": "Santorini, Greece", "isSeaDay": false }
                   ]
                 }
             """.trimIndent()
@@ -47,7 +91,6 @@ class MockCruiseInterceptor : Interceptor {
                 .build()
         }
 
-        // Pass through any other requests (won't happen in our app, but good practice)
         return chain.proceed(request)
     }
 }

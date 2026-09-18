@@ -9,7 +9,14 @@ public final class com/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutInt
 
 public final class com/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutIntent$NextStep : com/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutIntent {
 	public static final field $stable I
-	public static final field INSTANCE Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutIntent$NextStep;
+	public fun <init> (I)V
+	public final fun component1 ()I
+	public final fun copy (I)Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutIntent$NextStep;
+	public static synthetic fun copy$default (Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutIntent$NextStep;IILjava/lang/Object;)Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutIntent$NextStep;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMaxStep ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class com/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutIntent$PreviousStep : com/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutIntent {
@@ -97,12 +104,14 @@ public final class com/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutInt
 
 public final class com/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutScreenKt {
 	public static final fun AddonsStep (Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutState;Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutViewModel;Landroidx/compose/runtime/Composer;I)V
-	public static final fun CheckoutScreen (DLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutViewModel;Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutThemeConfig;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+	public static final fun CheckoutScreen (DLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutViewModel;Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutThemeConfig;Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutStepsConfig;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 	public static final fun GuestInfoStep (Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutState;Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutViewModel;Landroidx/compose/runtime/Composer;I)V
 	public static final fun PartySizeStep (Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutState;Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutViewModel;Landroidx/compose/runtime/Composer;I)V
-	public static final fun PayStep (Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutState;Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutThemeConfig;Landroidx/compose/runtime/Composer;I)V
+	public static final fun PayStep (Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutState;Ljava/lang/String;Ljava/lang/String;Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutThemeConfig;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 	public static final fun ReviewStep (Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutState;Ljava/lang/String;Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
 	public static final fun RoomSelectionStep (Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutState;Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutViewModel;Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutThemeConfig;Landroidx/compose/runtime/Composer;I)V
+	public static final fun VisualStepper (ILjava/util/List;Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutThemeConfig;Landroidx/compose/runtime/Composer;I)V
+	public static final fun rememberCheckoutSteps (Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutStepsConfig;Landroidx/compose/runtime/Composer;I)Ljava/util/List;
 }
 
 public final class com/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutState {
@@ -141,22 +150,64 @@ public final class com/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutSta
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class com/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutStepType : java/lang/Enum {
+	public static final field EXTRAS Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutStepType;
+	public static final field GUEST_INFO Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutStepType;
+	public static final field PARTY_SIZE Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutStepType;
+	public static final field PAY Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutStepType;
+	public static final field REVIEW Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutStepType;
+	public static final field ROOM_SELECTION Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutStepType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getTitle ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutStepType;
+	public static fun values ()[Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutStepType;
+}
+
+public final class com/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutStepsConfig {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (Z)V
+	public fun <init> (ZZ)V
+	public fun <init> (ZZZ)V
+	public fun <init> (ZZZZ)V
+	public synthetic fun <init> (ZZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Z
+	public final fun component2 ()Z
+	public final fun component3 ()Z
+	public final fun component4 ()Z
+	public final fun copy (ZZZZ)Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutStepsConfig;
+	public static synthetic fun copy$default (Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutStepsConfig;ZZZZILjava/lang/Object;)Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutStepsConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getShowExtras ()Z
+	public final fun getShowGuestInfo ()Z
+	public final fun getShowPartySize ()Z
+	public final fun getShowRoomSelection ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class com/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutThemeConfig {
 	public static final field $stable I
 	public fun <init> ()V
-	public synthetic fun <init> (JJIILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (JJILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JJIZLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JJIZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JJIZZLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (JJLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (JLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1-0d7_KjU ()J
 	public final fun component2-0d7_KjU ()J
 	public final fun component3 ()I
-	public final fun copy-jxsXWHM (JJI)Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutThemeConfig;
-	public static synthetic fun copy-jxsXWHM$default (Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutThemeConfig;JJIILjava/lang/Object;)Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutThemeConfig;
+	public final fun component4 ()Z
+	public final fun component5 ()Z
+	public final fun copy-dgg9oW8 (JJIZZ)Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutThemeConfig;
+	public static synthetic fun copy-dgg9oW8$default (Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutThemeConfig;JJIZZILjava/lang/Object;)Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutThemeConfig;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getButtonCornerRadiusDp ()I
+	public final fun getDummyFlag ()Z
 	public final fun getPrimaryColor-0d7_KjU ()J
 	public final fun getSecondaryColor-0d7_KjU ()J
+	public final fun getShowExploreMoreButton ()Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -183,6 +234,7 @@ public final class com/caribeanroyal/ecommercesample/sdk/checkout/ui/ComposableS
 	public static field lambda-4 Lkotlin/jvm/functions/Function3;
 	public static field lambda-5 Lkotlin/jvm/functions/Function2;
 	public static field lambda-6 Lkotlin/jvm/functions/Function2;
+	public static field lambda-7 Lkotlin/jvm/functions/Function3;
 	public fun <init> ()V
 	public final fun getLambda-1$checkout_ui_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda-2$checkout_ui_release ()Lkotlin/jvm/functions/Function3;
@@ -190,5 +242,6 @@ public final class com/caribeanroyal/ecommercesample/sdk/checkout/ui/ComposableS
 	public final fun getLambda-4$checkout_ui_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda-5$checkout_ui_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda-6$checkout_ui_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-7$checkout_ui_release ()Lkotlin/jvm/functions/Function3;
 }
 

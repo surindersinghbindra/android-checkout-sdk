@@ -65,8 +65,8 @@ android {
 
 dependencies {
     implementation(project(":feature:booking"))
-    implementation(project(":sdk:checkout-core"))
-    implementation(project(":sdk:checkout-ui"))
+    implementation("com.caribeanroyal.ecommercesample:checkout-core:1.0.0-SNAPSHOT")
+    implementation("com.caribeanroyal.ecommercesample:checkout-ui:1.0.0-SNAPSHOT")
     implementation(project(":library:designsystem"))
     implementation(project(":core:network"))
     implementation(project(":core:database"))

@@ -57,6 +57,7 @@ turbine-main = { group = "app.cash.turbine", name = "turbine", version.ref = "tu
 androidx-arch-core-testing = { group = "androidx.arch.core", name = "core-testing", version = "2.2.0" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version = "1.6.3" }
 
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version = "2.6.0" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
