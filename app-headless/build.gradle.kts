@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -43,6 +44,7 @@ dependencies {
     implementation(project(":feature:booking"))
     implementation(project(":core:domain"))
     implementation(project(":core:network"))
+    implementation(project(":core:database"))
     implementation(project(":library:designsystem"))
     
     // Navigation Compose
@@ -62,4 +64,6 @@ dependencies {
     implementation(libs.retrofit.main)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.okhttp.logging)
+    implementation(libs.dagger.main)
+    ksp(libs.dagger.compiler)
 }

@@ -20,6 +20,9 @@
             <option value="$PROJECT_DIR$/feature/booking" />
             <option value="$PROJECT_DIR$/library" />
             <option value="$PROJECT_DIR$/library/designsystem" />
+            <option value="$PROJECT_DIR$/sdk" />
+            <option value="$PROJECT_DIR$/sdk/checkout-core" />
+            <option value="$PROJECT_DIR$/sdk/checkout-ui" />
           </set>
         </option>
       </GradleProjectSettings>

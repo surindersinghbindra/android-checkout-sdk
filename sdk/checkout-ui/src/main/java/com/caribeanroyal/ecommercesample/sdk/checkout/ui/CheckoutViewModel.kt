@@ -94,7 +94,7 @@ class CheckoutViewModel(
                     _state.update { it.copy(isLoading = false, error = "Payment failed") }
                 }
             } catch (e: AlreadyProcessedException) {
-                sdkEngine.logError("CheckoutViewModel", "Payment already processed")
+                sdkEngine.logEvent("CheckoutViewModel", "Payment already processed (Idempotency key matched)")
                 _state.update { it.copy(isLoading = false, error = "This order has already been placed.") }
             } catch (e: Exception) {
                 sdkEngine.logError("CheckoutViewModel", "Payment exception: ${e.message}", e)

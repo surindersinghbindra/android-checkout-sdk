@@ -45,7 +45,7 @@ fun CustomHeadlessCheckoutScreen(
 ) {
     val coroutineScope = rememberCoroutineScope()
     var status by remember { mutableStateOf("Ready to pay") }
-    val sessionKey = remember { UUID.randomUUID().toString() }
+    val sessionKey = remember { "UUID.randomUUID().toString()" }
     var isProcessing by remember { mutableStateOf(false) }
     
     var expanded by remember { mutableStateOf(false) }

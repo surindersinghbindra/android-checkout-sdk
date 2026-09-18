@@ -14,38 +14,22 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import com.caribeanroyal.ecommercesample.core.network.repository.NetworkCruiseRepositoryImpl
 import com.caribeanroyal.ecommercesample.core.domain.usecase.SearchCruisesUseCase
-import com.caribeanroyal.ecommercesample.core.network.api.CruiseApiService
-import com.caribeanroyal.ecommercesample.core.network.interceptor.MockCruiseInterceptor
 import com.caribeanroyal.ecommercesample.designsystem.theme.ECommerceTheme
 import com.caribeanroyal.ecommercesample.feature.booking.viewmodel.BookingViewModelFactory
 import com.caribeanroyal.ecommercesample.sdk.checkout.core.CheckoutAnalytics
 import android.util.Log
 import com.caribeanroyal.ecommercesample.sdk.checkout.core.CheckoutSdk
 import com.caribeanroyal.ecommercesample.sdk.checkout.core.PaymentProcessorType
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.caribeanroyal.headless.di.DaggerAppComponent
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         
-        val okHttpClient = OkHttpClient.Builder()
-            .addInterceptor(MockCruiseInterceptor())
-            .build()
-            
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://api.royalcaribbean.com/")
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            
-        val apiService = retrofit.create(CruiseApiService::class.java)
-        val repository = NetworkCruiseRepositoryImpl(apiService)
-        val searchCruisesUseCase = SearchCruisesUseCase(repository)
+        val appComponent = DaggerAppComponent.factory().create(applicationContext)
+        val searchCruisesUseCase = appComponent.searchCruisesUseCase()
         val bookingFactory = BookingViewModelFactory(searchCruisesUseCase)
 
         val analyticsTracker = object : CheckoutAnalytics {
