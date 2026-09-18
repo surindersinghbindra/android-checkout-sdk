@@ -22,7 +22,7 @@ class MockCruiseInterceptor : Interceptor {
                       "sailDate": "2027-10-24",
                       "basePrice": 711.50,
                       "currency": "GBP",
-                      "imageUrl": "https://images.unsplash.com/photo-1549887552-cb1071d3e5a5?q=80&w=600&auto=format&fit=crop",
+                      "imageUrl": "https://images.unsplash.com/photo-1590523741831-ab7e8b8f9c7f?q=80&w=600&auto=format&fit=crop",
                       "days": [
                         { "dayNumber": 1, "location": "Rome, Italy", "isSeaDay": false }
                       ]
@@ -46,7 +46,7 @@ class MockCruiseInterceptor : Interceptor {
                       "sailDate": "2027-12-05",
                       "basePrice": 850.00,
                       "currency": "USD",
-                      "imageUrl": "https://images.unsplash.com/photo-1499696956799-73e44af207c6?q=80&w=600&auto=format&fit=crop",
+                      "imageUrl": "https://images.unsplash.com/photo-1590523741831-ab7e8b8f9c7f?q=80&w=600&auto=format&fit=crop",
                       "days": [
                         { "dayNumber": 1, "location": "Orlando, Florida", "isSeaDay": false }
                       ]
