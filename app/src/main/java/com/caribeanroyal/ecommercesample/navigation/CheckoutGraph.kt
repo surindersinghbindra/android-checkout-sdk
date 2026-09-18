@@ -23,6 +23,9 @@ fun NavGraphBuilder.checkoutGraph(
     composable<Screen.Checkout> { backStackEntry ->
         val checkoutRoute = backStackEntry.toRoute<Screen.Checkout>()
 
+        // Manually trigger the initializer only when the checkout feature is opened!
+        AppInitializer.getInstance(LocalContext.current).initializeComponent(CheckoutSdkInitializer::class.java)
+
         val factory = CheckoutViewModelFactory(checkoutSdk)
         val checkoutViewModel =
             ViewModelProvider(backStackEntry, factory)[CheckoutViewModel::class.java]
