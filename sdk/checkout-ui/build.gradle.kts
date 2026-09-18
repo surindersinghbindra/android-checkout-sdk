@@ -25,6 +25,13 @@ android {
     buildFeatures {
         compose = true
     }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/LICENSE.md"
+            excludes += "META-INF/LICENSE-notice.md"
+        }
+    }
     publishing {
         singleVariant("release") {
             withSourcesJar()
@@ -50,6 +57,9 @@ dependencies {
     testImplementation(libs.mockk.main)
     testImplementation(libs.coroutines.test)
     testImplementation(libs.turbine.main)
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.test.manifest)
+    androidTestImplementation(libs.mockk.android)
 }
 
 afterEvaluate {
