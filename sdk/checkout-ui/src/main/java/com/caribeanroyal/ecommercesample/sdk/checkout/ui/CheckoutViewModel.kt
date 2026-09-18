@@ -71,7 +71,7 @@ class CheckoutViewModel(
             _state.update { it.copy(isLoading = true, error = null) }
             
             try {
-                val success = sdkEngine.executeCheckout(
+                val success = sdkEngine.submitPayment( // Using deprecated method as requested
                     amount = intent.amount,
                     currency = intent.currency,
                     processorType = intent.processor.type

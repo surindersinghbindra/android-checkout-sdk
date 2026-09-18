@@ -40,6 +40,7 @@ class CheckoutViewModelTest {
     @Test
     fun `test SubmitPayment intent transitions to Success`() = runTest {
         coEvery { checkoutSdk.executeCheckout(100.0, "USD", PaymentProcessorType.STRIPE) } returns true
+        coEvery { checkoutSdk.submitPayment(100.0, "USD", PaymentProcessorType.STRIPE) } returns true
         val processor = mockk<PaymentProcessor>()
         every { processor.type } returns PaymentProcessorType.STRIPE
 

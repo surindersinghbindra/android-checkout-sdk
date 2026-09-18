@@ -11,6 +11,7 @@ public final class com/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutS
 	public final fun executeCheckout (DLjava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun getEnabledProcessors ()Ljava/util/List;
 	public final fun getEnvironment ()Ljava/lang/String;
+	public final fun submitPayment (DLjava/lang/String;Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/PaymentProcessorType;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class com/caribeanroyal/ecommercesample/sdk/checkout/core/CheckoutSdk$Builder {

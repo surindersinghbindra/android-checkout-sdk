@@ -41,6 +41,14 @@ class CheckoutSdk private constructor(
         }
     }
 
+    @Deprecated(
+        message = "This method will be replaced in the future to standardise naming conventions.",
+        replaceWith = ReplaceWith("executeCheckout(amount, currency, processorType)")
+    )
+    suspend fun submitPayment(amount: Double, currency: String, processorType: PaymentProcessorType): Boolean {
+        return executeCheckout(amount, currency, processorType)
+    }
+
     /**
      * Executes the checkout flow using the specified processor.
      */
