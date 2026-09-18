@@ -110,3 +110,75 @@ git commit -m "Your descriptive commit message"
 # Push to the remote repository
 git push
 ```
+
+
+## 🏗️ E-Commerce SDK & App Architecture
+
+## 1. Project Architecture & Modularization
+
+We built a highly modular, multi-module Android project that acts as both a consumer application and a distributable SDK.
+
+*   **Monorepo Strategy**: The project is broken down into distinct layers:
+    *   `app` & `app-headless`: Host applications representing consumers of the SDK.
+    *   `core:domain`, `core:database`, `core:network`: Pure logic, data persistence (Room), and remote networking (Retrofit).
+    *   `feature:booking`: Standalone Jetpack Compose feature module containing the PLP (Product List) and PDP (Product Detail).
+    *   `library:designsystem`: Centralized Compose theming, colors, typography, and reusable components.
+    *   `sdk:checkout-core` (Pure JVM) & `sdk:checkout-ui` (Android Library): The distributable white-label commerce SDK.
+*   **Dependency Injection**: Used **Dagger 2** (not Hilt) manually orchestrated via `AppComponent` in the `:app` module to prove an understanding of raw dependency graphs and factory provision.
+*   **Edge-to-Edge UI**: Implemented modern Android windowing using `enableEdgeToEdge()` and Jetpack Compose `Scaffold` to draw UI behind system bars seamlessly.
+*   **Modular Navigation**: Transitioned from a monolithic `NavHost` to a clean, decoupled approach using `NavGraphBuilder` extension functions (`bookingGraph`, `checkoutGraph`).
+*   **SDK Builder Pattern**: Designed a robust `CheckoutSdk.Builder` that allows host apps to configure the SDK (Processors, Theme, Analytics, Debugging) cleanly.
+
+---
+
+## 2. Advanced Jetpack Compose Usage
+
+The UI is entirely built in Jetpack Compose, showcasing modern declarative UI paradigms.
+
+*   **State Hoisting & UDF (Unidirectional Data Flow)**: ViewModels expose immutable `StateFlow` objects. The UI consumes these flows via `collectAsState()` and dispatches actions/intents back to the ViewModel.
+*   **Type-Safe Navigation**: Used the latest Jetpack Navigation Compose API (`navigation-compose:2.8.0`) with `@Serializable` Kotlin Data Objects/Classes to pass complex arguments safely between screens (e.g., `Screen.Checkout(price, currency)`).
+*   **Custom Theming & Dynamic Styling**: Created a `CheckoutThemeConfig` that allows the host app to dynamically inject brand colors and corner radii into the SDK's internal Compose hierarchy.
+*   **LaunchedEffect**: Used for side effects, such as the 1.5-second delay in the `SplashScreen` before navigating.
+
+---
+
+## 3. Kotlin Features & Idioms Used
+
+We heavily leveraged modern Kotlin features to write concise, safe, and expressive code.
+
+*   **Coroutines & Flows**: 
+    *   Used `suspend` functions for asynchronous network and database calls.
+    *   Used `StateFlow` and `MutableStateFlow` to manage UI state reactively.
+    *   Used `viewModelScope.launch` to bind async work to the UI lifecycle.
+*   **Sealed Classes & Interfaces**: 
+    *   `sealed interface CheckoutState` (Idle, Processing, Success, Error) to strictly define the finite state machine of the UI.
+    *   `sealed interface Screen` for exhaustive navigation routing.
+*   **Extension Functions**: 
+    *   `fun NavGraphBuilder.bookingGraph(...)` to extend the NavHost DSL without polluting the core class.
+*   **Data Classes & Value Objects**: Used for immutable models like `CruiseModel`, `RoomModel`, and `CheckoutStepsConfig`.
+*   **Delegated Properties**: Used `by remember { mutableStateOf(...) }` in Compose to delegate getter/setter logic to the Compose state engine.
+*   **Higher-Order Functions & Lambdas**: Passed callbacks like `onNavigateToCheckout: (Double, String, String, String) -> Unit` from UI components up to the NavGraph to keep Composables completely decoupled from Navigation logic.
+*   **Inline Classes & Enums**: `PaymentProcessorType` enum to strictly define supported gateways (Adyen, Stripe, Simulator).
+
+---
+
+## 4. Best Practices for SDK Development (The "Hardening" Phase)
+
+Building an SDK requires stricter discipline than building an app. We implemented several industry-standard SDK practices:
+
+*   **Binary Compatibility Validator (BCV)**: Used JetBrains BCV (`.api` dump files) to track the public API surface area and catch accidental breaking changes.
+*   **ProGuard / R8 Rules**: Shipped a `consumer-rules.pro` file embedded in the `.aar` and used `@Keep` annotations on public models (`CheckoutThemeConfig`, etc.) to ensure the host app's minifier doesn't obfuscate critical SDK entry points.
+*   **Graceful Deprecation**: Used `@Deprecated(..., ReplaceWith(...))` to guide developers away from old APIs (`submitPayment`) toward new ones (`executeCheckout`), emitting compile-time warnings instead of breaking their builds abruptly.
+*   **Analytics & Error Boundaries**: Created a `CheckoutAnalytics` interface. Instead of the SDK assuming a specific analytics provider (like Firebase), it delegates `logEvent` and `logError` back to the host app, giving the consumer total control over data sovereignty.
+*   **Silent by Default**: Implemented a `debuggable` flag. The SDK remains completely silent in production, only printing internal logs if the host explicitly opts in during debugging.
+
+---
+
+## 5. Testing Strategy
+
+*   **Unit Testing with MockK**: Wrote isolated tests for `CheckoutViewModel` using `mockk` to stub the `CheckoutSdk`. Used `coEvery` to mock suspend functions.
+*   **Turbine for Flow Testing**: Used Cash App's `Turbine` library (`viewModel.uiState.test { ... }`) to exhaustively assert the sequence of state emissions (Idle -> Processing -> Success) inside coroutines.
+*   **Compose UI Testing**: Configured `androidx.ui.test.junit4` and `ComposeTestRule` to test UI nodes (`onNodeWithText`, `performClick`) in isolation, proving that the UI layer reacts correctly to mocked SDK responses.
+
+---
+
