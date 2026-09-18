@@ -7,7 +7,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.caribeanroyal.ecommercesample.feature.booking.viewmodel.BookingViewModelFactory
 import com.caribeanroyal.ecommercesample.sdk.checkout.core.CheckoutSdk
 import com.caribeanroyal.headless.ui.SplashScreen
 
@@ -15,7 +14,6 @@ import com.caribeanroyal.headless.ui.SplashScreen
 fun ECommerceHeadlessApp(
     sdkEngine: CheckoutSdk,
     viewModelStoreOwner: ViewModelStoreOwner,
-    bookingFactory: BookingViewModelFactory,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController()
 ) {
@@ -36,8 +34,7 @@ fun ECommerceHeadlessApp(
 
         bookingGraph(
             navController = navController,
-            viewModelStoreOwner = viewModelStoreOwner,
-            bookingFactory = bookingFactory
+            viewModelStoreOwner = viewModelStoreOwner
         )
 
         checkoutGraph(

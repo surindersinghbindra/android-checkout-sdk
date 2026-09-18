@@ -14,24 +14,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import com.caribeanroyal.ecommercesample.core.domain.usecase.SearchCruisesUseCase
 import com.caribeanroyal.ecommercesample.designsystem.theme.ECommerceTheme
-import com.caribeanroyal.ecommercesample.feature.booking.viewmodel.BookingViewModelFactory
 import com.caribeanroyal.ecommercesample.sdk.checkout.core.CheckoutAnalytics
 import android.util.Log
 import com.caribeanroyal.ecommercesample.sdk.checkout.core.CheckoutSdk
 import com.caribeanroyal.ecommercesample.sdk.checkout.core.PaymentProcessorType
-import com.caribeanroyal.headless.di.DaggerAppComponent
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         
-        val appComponent = DaggerAppComponent.factory().create(applicationContext)
-        val searchCruisesUseCase = appComponent.searchCruisesUseCase()
-        val bookingFactory = BookingViewModelFactory(searchCruisesUseCase)
-
         val analyticsTracker = object : CheckoutAnalytics {
             override fun logEvent(eventName: String, params: Map<String, Any>) {
                 Log.d("HeadlessAnalytics", "EVENT: $eventName")
@@ -58,8 +51,7 @@ class MainActivity : ComponentActivity() {
                     Box(modifier = Modifier.padding(innerPadding)) {
                         ECommerceHeadlessApp(
                             sdkEngine = sdkEngine,
-                            viewModelStoreOwner = this@MainActivity,
-                            bookingFactory = bookingFactory
+                            viewModelStoreOwner = this@MainActivity
                         )
                     }
                 }

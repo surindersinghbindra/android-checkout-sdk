@@ -22,16 +22,12 @@ import com.caribeanroyal.ecommercesample.sdk.checkout.ui.CheckoutThemeConfig
 
 import com.caribeanroyal.ecommercesample.sdk.checkout.core.PaymentProcessorType
 
-import com.caribeanroyal.ecommercesample.di.DaggerAppComponent
 
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        
-        val appComponent = DaggerAppComponent.factory().create(applicationContext)
-        val searchCruisesUseCase = appComponent.searchCruisesUseCase()
         
         // Analytics tracker implementation
         val analyticsTracker = object : CheckoutAnalytics {
@@ -73,8 +69,7 @@ class MainActivity : ComponentActivity() {
                         ECommerceApp(
                             checkoutSdk = checkoutSdk,
                             checkoutThemeConfig = sdkThemeConfig,
-                            viewModelStoreOwner = this@MainActivity,
-                            searchCruisesUseCase = searchCruisesUseCase
+                            viewModelStoreOwner = this@MainActivity
                         )
                     }
                 }

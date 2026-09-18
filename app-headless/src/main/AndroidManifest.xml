@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
+        android:name=".HeadlessApp"
         android:allowBackup="true"
         android:label="Headless App"
         android:supportsRtl="true"

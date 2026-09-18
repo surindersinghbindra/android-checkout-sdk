@@ -1,8 +1,11 @@
 package com.caribeanroyal.ecommercesample.navigation
 
 import androidx.lifecycle.ViewModelProvider
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavController
+import com.caribeanroyal.ecommercesample.ECommerceApp
+import androidx.compose.runtime.remember
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
@@ -14,12 +17,13 @@ import com.caribeanroyal.ecommercesample.feature.booking.viewmodel.BookingViewMo
 
 fun NavGraphBuilder.bookingGraph(
     navController: NavController,
-    viewModelStoreOwner: ViewModelStoreOwner,
-    searchCruisesUseCase: SearchCruisesUseCase
+    viewModelStoreOwner: ViewModelStoreOwner
 ) {
-    val bookingFactory = BookingViewModelFactory(searchCruisesUseCase)
-
     composable<Screen.Booking> {
+        val context = LocalContext.current
+        val appComponent = (context.applicationContext as ECommerceApp).appComponent
+        val searchCruisesUseCase = remember { appComponent.searchCruisesUseCase() }
+        val bookingFactory = remember { BookingViewModelFactory(searchCruisesUseCase) }
         val bookingViewModel =
             ViewModelProvider(viewModelStoreOwner, bookingFactory)[BookingViewModel::class.java]
 
@@ -32,6 +36,10 @@ fun NavGraphBuilder.bookingGraph(
     }
 
     composable<Screen.CruiseDetail> { backStackEntry ->
+        val context = LocalContext.current
+        val appComponent = (context.applicationContext as ECommerceApp).appComponent
+        val searchCruisesUseCase = remember { appComponent.searchCruisesUseCase() }
+        val bookingFactory = remember { BookingViewModelFactory(searchCruisesUseCase) }
         val detailRoute = backStackEntry.toRoute<Screen.CruiseDetail>()
         val bookingViewModel =
             ViewModelProvider(viewModelStoreOwner, bookingFactory)[BookingViewModel::class.java]

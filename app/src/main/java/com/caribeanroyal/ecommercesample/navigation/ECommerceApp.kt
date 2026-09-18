@@ -7,7 +7,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.caribeanroyal.ecommercesample.core.domain.usecase.SearchCruisesUseCase
 import com.caribeanroyal.ecommercesample.sdk.checkout.core.CheckoutSdk
 import com.caribeanroyal.ecommercesample.sdk.checkout.ui.CheckoutThemeConfig
 import com.caribeanroyal.ecommercesample.ui.SplashScreen
@@ -17,7 +16,6 @@ fun ECommerceApp(
     checkoutSdk: CheckoutSdk,
     checkoutThemeConfig: CheckoutThemeConfig,
     viewModelStoreOwner: ViewModelStoreOwner,
-    searchCruisesUseCase: SearchCruisesUseCase,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController()
 ) {
@@ -38,8 +36,7 @@ fun ECommerceApp(
 
         bookingGraph(
             navController = navController,
-            viewModelStoreOwner = viewModelStoreOwner,
-            searchCruisesUseCase = searchCruisesUseCase
+            viewModelStoreOwner = viewModelStoreOwner
         )
 
         checkoutGraph(
