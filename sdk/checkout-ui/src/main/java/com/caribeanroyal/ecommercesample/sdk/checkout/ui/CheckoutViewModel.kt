@@ -10,25 +10,31 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+import com.caribeanroyal.ecommercesample.sdk.checkout.core.PaymentProcessorType
+
 class CheckoutViewModel(
     private val checkoutSdk: CheckoutSdk
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(CheckoutState())
+    private val _state = MutableStateFlow(
+        CheckoutState(
+            availableProcessors = checkoutSdk.enabledProcessors.map { it.type }
+        )
+    )
     val state: StateFlow<CheckoutState> = _state.asStateFlow()
 
     fun handleIntent(intent: CheckoutIntent) {
         when (intent) {
-            is CheckoutIntent.SubmitPayment -> processPayment(intent.amount, intent.currency)
+            is CheckoutIntent.SubmitPayment -> processPayment(intent.amount, intent.currency, intent.processorType)
             is CheckoutIntent.RetryPayment -> resetState()
         }
     }
 
-    private fun processPayment(amount: Double, currency: String) {
+    private fun processPayment(amount: Double, currency: String, processorType: PaymentProcessorType) {
         _state.update { it.copy(isLoading = true, errorMessage = null) }
         viewModelScope.launch {
             try {
-                val result = checkoutSdk.executeCheckout(amount, currency)
+                val result = checkoutSdk.executeCheckout(amount, currency, processorType)
                 if (result) {
                     _state.update { it.copy(isLoading = false, isSuccess = true) }
                 } else {
@@ -41,7 +47,9 @@ class CheckoutViewModel(
     }
 
     private fun resetState() {
-        _state.value = CheckoutState()
+        _state.value = CheckoutState(
+            availableProcessors = checkoutSdk.enabledProcessors.map { it.type }
+        )
     }
 }
 

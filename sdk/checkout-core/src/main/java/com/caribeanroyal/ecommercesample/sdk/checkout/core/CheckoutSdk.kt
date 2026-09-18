@@ -4,40 +4,41 @@ package com.caribeanroyal.ecommercesample.sdk.checkout.core
  * Headless entry point for the Checkout SDK business logic.
  */
 class CheckoutSdk private constructor(
-    val paymentProcessor: PaymentProcessor,
+    val enabledProcessors: List<PaymentProcessor>,
     val environment: String
 ) {
 
-    /**
-     * Legacy initialization method from v1.0 of the SDK.
-     * @deprecated Use the newer Builder or primary initializer.
-     */
-    @Deprecated(
-        message = "This initialization method is obsolete. Use the new builder which supports environment configuration.",
-        replaceWith = ReplaceWith("CheckoutSdk.Builder().setPaymentProcessor(paymentProcessor).build()")
-    )
-    constructor(paymentProcessor: PaymentProcessor) : this(paymentProcessor, "production")
-
     class Builder {
-        private var paymentProcessor: PaymentProcessor? = null
+        private val enabledProcessors = mutableListOf<PaymentProcessor>()
         private var environment: String = "production"
 
-        fun setPaymentProcessor(processor: PaymentProcessor) = apply { this.paymentProcessor = processor }
+        fun enableProcessors(types: List<PaymentProcessorType>) = apply { 
+            types.forEach { type ->
+                when(type) {
+                    PaymentProcessorType.ADYEN -> enabledProcessors.add(AdyenProcessor())
+                    PaymentProcessorType.STRIPE -> enabledProcessors.add(StripeProcessor())
+                    PaymentProcessorType.HEADLESS -> { /* handled by host app if needed, omitting here for simplicity */ }
+                }
+            }
+        }
         
         @JvmOverloads
         fun setEnvironment(env: String = "production") = apply { this.environment = env }
 
         fun build(): CheckoutSdk {
-            val processor = paymentProcessor ?: throw IllegalStateException("PaymentProcessor must be provided.")
-            return CheckoutSdk(processor, environment)
+            if (enabledProcessors.isEmpty()) {
+                throw IllegalStateException("At least one PaymentProcessorType must be enabled.")
+            }
+            return CheckoutSdk(enabledProcessors, environment)
         }
     }
 
     /**
-     * Executes the checkout flow.
+     * Executes the checkout flow using the specified processor.
      */
-    suspend fun executeCheckout(amount: Double, currency: String): Boolean {
-        // Here we could add telemetry, logging, and other core headless logic before calling the strategy.
-        return paymentProcessor.processPayment(amount, currency)
+    suspend fun executeCheckout(amount: Double, currency: String, processorType: PaymentProcessorType): Boolean {
+        val processor = enabledProcessors.find { it.type == processorType } 
+            ?: throw IllegalArgumentException("Processor $processorType is not enabled in the SDK.")
+        return processor.processPayment(amount, currency)
     }
 }

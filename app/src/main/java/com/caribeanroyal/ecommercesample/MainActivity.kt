@@ -12,26 +12,23 @@ import com.caribeanroyal.ecommercesample.designsystem.theme.BrandSecondary
 import com.caribeanroyal.ecommercesample.designsystem.theme.ECommerceTheme
 import com.caribeanroyal.ecommercesample.navigation.AppNavigation
 import com.caribeanroyal.ecommercesample.sdk.checkout.core.CheckoutSdk
-import com.caribeanroyal.ecommercesample.sdk.checkout.core.PaymentProcessor
 import com.caribeanroyal.ecommercesample.sdk.checkout.ui.CheckoutThemeConfig
-import kotlinx.coroutines.delay
 
-// A dummy implementation of the PaymentProcessor strategy for the host app.
-class StripePaymentProcessor : PaymentProcessor {
-    override suspend fun processPayment(amount: Double, currency: String): Boolean {
-        delay(1000)
-        return amount > 0
-    }
-}
+import com.caribeanroyal.ecommercesample.sdk.checkout.core.PaymentProcessorType
+
+import com.caribeanroyal.ecommercesample.di.DaggerAppComponent
 
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // 1. Initialize the SDK using the new Builder
+        val appComponent = DaggerAppComponent.factory().create(applicationContext)
+        val getCruiseItineraryUseCase = appComponent.getCruiseItineraryUseCase()
+        
+        // Demonstrated Aggregator Pattern: SDK handles the processors internally!
         val checkoutSdk = CheckoutSdk.Builder()
-            .setPaymentProcessor(StripePaymentProcessor())
+            .enableProcessors(listOf(PaymentProcessorType.ADYEN, PaymentProcessorType.STRIPE))
             .setEnvironment("staging")
             .build()
             
@@ -52,7 +49,8 @@ class MainActivity : ComponentActivity() {
                     AppNavigation(
                         checkoutSdk = checkoutSdk,
                         checkoutThemeConfig = sdkThemeConfig,
-                        viewModelStoreOwner = this
+                        viewModelStoreOwner = this,
+                        getCruiseItineraryUseCase = getCruiseItineraryUseCase
                     )
                 }
             }

@@ -11,25 +11,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.caribeanroyal.ecommercesample.sdk.checkout.core.CheckoutSdk
-import com.caribeanroyal.ecommercesample.sdk.checkout.core.PaymentProcessor
+import com.caribeanroyal.ecommercesample.sdk.checkout.core.PaymentProcessorType
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
-// Custom Payment Processor implemented by the Headless App Team
-class HeadlessPaymentProcessor : PaymentProcessor {
-    override suspend fun processPayment(amount: Double, currency: String): Boolean {
-        delay(1500)
-        return true
-    }
-}
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // 1. Initialize ONLY the Core SDK
+        // 1. Initialize ONLY the Core SDK with built-in processors
         val sdkEngine = CheckoutSdk.Builder()
-            .setPaymentProcessor(HeadlessPaymentProcessor())
+            .enableProcessors(listOf(PaymentProcessorType.ADYEN, PaymentProcessorType.STRIPE))
             .setEnvironment("headless-production")
             .build()
 
@@ -48,6 +40,10 @@ fun CustomHeadlessCheckoutScreen(sdkEngine: CheckoutSdk) {
     val coroutineScope = rememberCoroutineScope()
     var status by remember { mutableStateOf("Ready to pay") }
     var isProcessing by remember { mutableStateOf(false) }
+    
+    var expanded by remember { mutableStateOf(false) }
+    val processors = sdkEngine.enabledProcessors.map { it.type }
+    var selectedProcessor by remember { mutableStateOf(processors.firstOrNull()) }
 
     Column(
         modifier = Modifier.fillMaxSize().padding(32.dp),
@@ -68,16 +64,42 @@ fun CustomHeadlessCheckoutScreen(sdkEngine: CheckoutSdk) {
         if (isProcessing) {
             CircularProgressIndicator()
         } else {
+            if (selectedProcessor != null) {
+                Box {
+                    OutlinedButton(onClick = { expanded = true }) {
+                        Text("Processor: ${selectedProcessor?.displayName}")
+                    }
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        processors.forEach { processor ->
+                            DropdownMenuItem(
+                                text = { Text(processor.displayName) },
+                                onClick = {
+                                    selectedProcessor = processor
+                                    expanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+
             Button(
                 onClick = {
-                    coroutineScope.launch {
-                        isProcessing = true
-                        status = "Processing via Core SDK..."
-                        val result = sdkEngine.executeCheckout(299.99, "USD")
-                        isProcessing = false
-                        status = if (result) "Payment Successful!" else "Payment Failed."
+                    selectedProcessor?.let { processor ->
+                        coroutineScope.launch {
+                            isProcessing = true
+                            status = "Processing via Core SDK..."
+                            val result = sdkEngine.executeCheckout(299.99, "USD", processor)
+                            isProcessing = false
+                            status = if (result) "Payment Successful!" else "Payment Failed."
+                        }
                     }
                 },
+                enabled = selectedProcessor != null,
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
             ) {
                 Text("Pay $299.99")

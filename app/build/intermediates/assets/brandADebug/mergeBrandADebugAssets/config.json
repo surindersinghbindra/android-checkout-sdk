@@ -1,7 +1,0 @@
-{
-  "theme": "light",
-  "api_endpoint": "https://api.branda.example.com",
-  "feature_flags": {
-    "enable_new_checkout": true
-  }
-}

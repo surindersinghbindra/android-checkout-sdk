@@ -9,20 +9,22 @@ public final class com/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutInt
 
 public final class com/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutIntent$SubmitPayment : com/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutIntent {
 	public static final field $stable I
-	public fun <init> (DLjava/lang/String;)V
+	public fun <init> (DLjava/lang/String;Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/PaymentProcessorType;)V
 	public final fun component1 ()D
 	public final fun component2 ()Ljava/lang/String;
-	public final fun copy (DLjava/lang/String;)Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutIntent$SubmitPayment;
-	public static synthetic fun copy$default (Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutIntent$SubmitPayment;DLjava/lang/String;ILjava/lang/Object;)Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutIntent$SubmitPayment;
+	public final fun component3 ()Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/PaymentProcessorType;
+	public final fun copy (DLjava/lang/String;Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/PaymentProcessorType;)Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutIntent$SubmitPayment;
+	public static synthetic fun copy$default (Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutIntent$SubmitPayment;DLjava/lang/String;Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/PaymentProcessorType;ILjava/lang/Object;)Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutIntent$SubmitPayment;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAmount ()D
 	public final fun getCurrency ()Ljava/lang/String;
+	public final fun getProcessorType ()Lcom/caribeanroyal/ecommercesample/sdk/checkout/core/PaymentProcessorType;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class com/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutScreenKt {
-	public static final fun CheckoutScreen (Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutViewModel;Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutThemeConfig;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+	public static final fun CheckoutScreen (DLjava/lang/String;Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutViewModel;Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutThemeConfig;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class com/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutState {
@@ -32,14 +34,17 @@ public final class com/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutSta
 	public fun <init> (ZZ)V
 	public fun <init> (ZZLjava/lang/String;)V
 	public fun <init> (ZZLjava/lang/String;Z)V
-	public synthetic fun <init> (ZZLjava/lang/String;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (ZZLjava/lang/String;ZLjava/util/List;)V
+	public synthetic fun <init> (ZZLjava/lang/String;ZLjava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Z
 	public final fun component2 ()Z
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Z
-	public final fun copy (ZZLjava/lang/String;Z)Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutState;
-	public static synthetic fun copy$default (Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutState;ZZLjava/lang/String;ZILjava/lang/Object;)Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutState;
+	public final fun component5 ()Ljava/util/List;
+	public final fun copy (ZZLjava/lang/String;ZLjava/util/List;)Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutState;
+	public static synthetic fun copy$default (Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutState;ZZLjava/lang/String;ZLjava/util/List;ILjava/lang/Object;)Lcom/caribeanroyal/ecommercesample/sdk/checkout/ui/CheckoutState;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAvailableProcessors ()Ljava/util/List;
 	public final fun getErrorMessage ()Ljava/lang/String;
 	public final fun getShowDiscountField ()Z
 	public fun hashCode ()I

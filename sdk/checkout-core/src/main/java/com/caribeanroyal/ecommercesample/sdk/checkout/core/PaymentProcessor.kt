@@ -1,10 +1,20 @@
 package com.caribeanroyal.ecommercesample.sdk.checkout.core
 
 /**
+ * Enum defining the built-in payment processors supported by the SDK.
+ */
+enum class PaymentProcessorType(val displayName: String) {
+    ADYEN("Adyen"),
+    STRIPE("Stripe"),
+    HEADLESS("Custom Headless")
+}
+
+/**
  * Strategy interface defining the contract for processing payments within the SDK.
- * Host applications must provide an implementation of this (e.g., Stripe, Adyen).
  */
 interface PaymentProcessor {
+    val type: PaymentProcessorType
+    
     /**
      * Executes the payment transaction.
      * 

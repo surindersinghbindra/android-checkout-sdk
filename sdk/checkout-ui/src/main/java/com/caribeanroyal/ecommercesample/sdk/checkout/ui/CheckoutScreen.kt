@@ -6,6 +6,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -13,12 +14,19 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun CheckoutScreen(
+    amount: Double,
+    currency: String,
     viewModel: CheckoutViewModel,
     themeConfig: CheckoutThemeConfig,
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.state.collectAsState()
+    
+    var expanded by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+    var selectedProcessor by androidx.compose.runtime.remember(state.availableProcessors) { 
+        androidx.compose.runtime.mutableStateOf(state.availableProcessors.firstOrNull()) 
+    }
 
     // Apply the dynamic SDK Theme
     MaterialTheme(
@@ -62,10 +70,42 @@ fun CheckoutScreen(
                         }
                     }
                     else -> {
-                        Text("Total: $100.00")
+                        Text("Total: $amount $currency", style = MaterialTheme.typography.titleLarge)
                         Spacer(modifier = Modifier.height(16.dp))
+                        
+                        if (selectedProcessor != null) {
+                            Box {
+                                OutlinedButton(onClick = { expanded = true }) {
+                                    Text("Payment Method: ${selectedProcessor?.displayName}")
+                                }
+                                DropdownMenu(
+                                    expanded = expanded,
+                                    onDismissRequest = { expanded = false }
+                                ) {
+                                    state.availableProcessors.forEach { processor ->
+                                        DropdownMenuItem(
+                                            text = { Text(processor.displayName) },
+                                            onClick = {
+                                                selectedProcessor = processor
+                                                expanded = false
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                        } else {
+                            Text("No payment methods available", color = Color.Red)
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+                        
                         Button(
-                            onClick = { viewModel.handleIntent(CheckoutIntent.SubmitPayment(100.0, "USD")) },
+                            onClick = { 
+                                selectedProcessor?.let {
+                                    viewModel.handleIntent(CheckoutIntent.SubmitPayment(amount, currency, it))
+                                }
+                            },
+                            enabled = selectedProcessor != null,
                             shape = RoundedCornerShape(themeConfig.buttonCornerRadiusDp.dp)
                         ) {
                             Text("Pay Now")

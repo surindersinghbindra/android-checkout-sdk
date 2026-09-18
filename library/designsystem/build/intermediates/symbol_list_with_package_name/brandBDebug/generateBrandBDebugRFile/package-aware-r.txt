@@ -1,3 +1,0 @@
-com.caribeanroyal.ecommercesample.designsystem
-color brand_primary
-color brand_secondary

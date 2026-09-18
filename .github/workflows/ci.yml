@@ -23,8 +23,11 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
       
-    - name: Run Core & UI Tests
-      run: ./gradlew :sdk:checkout-core:test :sdk:checkout-ui:test
+    - name: Run Unit Tests
+      run: ./gradlew test
 
     - name: Run Binary Compatibility Validator API Check
       run: ./gradlew apiCheck
+      
+    - name: Build Debug App
+      run: ./gradlew assembleDebug

@@ -15,33 +15,50 @@ import com.caribeanroyal.ecommercesample.sdk.checkout.ui.CheckoutThemeConfig
 import com.caribeanroyal.ecommercesample.sdk.checkout.ui.CheckoutViewModel
 import com.caribeanroyal.ecommercesample.sdk.checkout.ui.CheckoutViewModelFactory
 
+import androidx.navigation.toRoute
+
+import com.caribeanroyal.ecommercesample.core.domain.usecase.GetCruiseItineraryUseCase
+import com.caribeanroyal.ecommercesample.feature.booking.viewmodel.BookingViewModel
+import com.caribeanroyal.ecommercesample.feature.booking.viewmodel.BookingViewModelFactory
+
 @Composable
 fun AppNavigation(
     checkoutSdk: CheckoutSdk,
     checkoutThemeConfig: CheckoutThemeConfig,
     viewModelStoreOwner: ViewModelStoreOwner,
+    getCruiseItineraryUseCase: GetCruiseItineraryUseCase,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController()
 ) {
     NavHost(
         navController = navController,
-        startDestination = "booking",
+        startDestination = Screen.Booking,
         modifier = modifier
     ) {
-        composable("booking") {
+        composable<Screen.Booking> { backStackEntry ->
+            val factory = BookingViewModelFactory(getCruiseItineraryUseCase)
+            val bookingViewModel = ViewModelProvider(backStackEntry, factory)[BookingViewModel::class.java]
+            
             BookingScreen(
-                onNavigateToCheckout = {
-                    navController.navigate("checkout")
+                viewModel = bookingViewModel,
+                onNavigateToCheckout = { price, currency ->
+                    navController.navigate(Screen.Checkout(price = price, currency = currency))
                 }
             )
         }
         
-        composable("checkout") {
-            // Instantiate the SDK's ViewModel
+        composable<Screen.Checkout> { backStackEntry ->
+            val checkoutRoute = backStackEntry.toRoute<Screen.Checkout>()
+            // We can now use checkoutRoute.price and checkoutRoute.currency if the SDK supported it!
+            
+            // Instantiate the SDK's ViewModel scoped to THIS specific navigation entry,
+            // so returning to this screen creates a fresh state instead of the old success state.
             val factory = CheckoutViewModelFactory(checkoutSdk)
-            val checkoutViewModel = ViewModelProvider(viewModelStoreOwner, factory)[CheckoutViewModel::class.java]
+            val checkoutViewModel = ViewModelProvider(backStackEntry, factory)[CheckoutViewModel::class.java]
             
             CheckoutScreen(
+                amount = checkoutRoute.price,
+                currency = checkoutRoute.currency,
                 viewModel = checkoutViewModel,
                 themeConfig = checkoutThemeConfig,
                 onNavigateBack = {

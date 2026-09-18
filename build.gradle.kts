@@ -10,3 +10,24 @@ plugins {
 apiValidation {
     ignoredProjects += listOf("app", "app-headless", "network", "database", "domain", "booking", "designsystem")
 }
+
+subprojects {
+    afterEvaluate {
+        tasks.configureEach {
+            if (name.startsWith("assemble") && !name.contains("Test", ignoreCase = true)) {
+                val buildVariant = name.removePrefix("assemble")
+                val testTaskName = "test${buildVariant}UnitTest"
+                val testTask = tasks.findByName(testTaskName)
+                
+                if (testTask != null) {
+                    dependsOn(testTask)
+                } else {
+                    val fallbackTest = tasks.findByName("test")
+                    if (fallbackTest != null) {
+                        dependsOn(fallbackTest)
+                    }
+                }
+            }
+        }
+    }
+}

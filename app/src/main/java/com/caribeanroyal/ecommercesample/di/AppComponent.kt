@@ -7,9 +7,14 @@ import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
 
+import com.caribeanroyal.ecommercesample.core.domain.usecase.GetCruiseItineraryUseCase
+import com.caribeanroyal.ecommercesample.core.network.di.RepositoryModule
+
 @Singleton
-@Component(modules = [NetworkModule::class, DatabaseModule::class])
+@Component(modules = [NetworkModule::class, DatabaseModule::class, RepositoryModule::class])
 interface AppComponent {
+
+    fun getCruiseItineraryUseCase(): GetCruiseItineraryUseCase
 
     @Component.Factory
     interface Factory {

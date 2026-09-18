@@ -1,2 +1,0 @@
-int color brand_primary 0x0
-int color brand_secondary 0x0

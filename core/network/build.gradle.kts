@@ -24,11 +24,14 @@ android {
 }
 
 dependencies {
+    api(project(":core:domain"))
     implementation(libs.androidx.core.ktx)
+    implementation(libs.coroutines.core)
 
     api(libs.retrofit.main)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.gson.main)
+    implementation(libs.okhttp.logging)
     
     implementation(libs.dagger.main)
     ksp(libs.dagger.compiler)
