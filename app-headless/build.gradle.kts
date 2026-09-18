@@ -15,6 +15,7 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        missingDimensionStrategy("brand", "brandA")
     }
 
     compileOptions {
@@ -34,6 +35,16 @@ dependencies {
     // No dependency on checkout-ui.
     implementation(project(":sdk:checkout-core"))
     
+    // Add feature:booking to show the booking screen
+    implementation(project(":feature:booking"))
+    implementation(project(":core:domain"))
+    implementation(project(":core:network"))
+    implementation(project(":library:designsystem"))
+    
+    // Navigation Compose
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
+    
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -43,4 +54,8 @@ dependencies {
     
     implementation(libs.coroutines.core)
     implementation(libs.coroutines.android)
+    
+    implementation(libs.retrofit.main)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.okhttp.logging)
 }

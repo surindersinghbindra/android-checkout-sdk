@@ -20,14 +20,14 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class BookingViewModelTest {
 
-    private lateinit var viewModel: BookingViewModel
-    private val useCase: GetCruiseItineraryUseCase = mockk()
-    
     private val testDispatcher = StandardTestDispatcher()
+    private lateinit var getCruiseItineraryUseCase: GetCruiseItineraryUseCase
+    private lateinit var viewModel: BookingViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
+        getCruiseItineraryUseCase = mockk()
     }
 
     @After
@@ -36,80 +36,54 @@ class BookingViewModelTest {
     }
 
     @Test
-    fun `initial state is Loading and transitions to Success when fetch succeeds`() = runTest {
-        val mockItinerary = CruiseItinerary(
-            packageCode = "TEST",
-            title = "Test Cruise",
-            departurePort = "Miami",
-            sailDate = "2025-01-01",
-            basePrice = 500.0,
-            currency = "USD",
-            days = emptyList()
-        )
+    fun `when initialization starts, state is Loading`() = runTest {
+        coEvery { getCruiseItineraryUseCase(any()) } returns Result.success(mockItinerary)
 
-        coEvery { useCase(any()) } returns Result.success(mockItinerary)
-
-        viewModel = BookingViewModel(useCase)
+        viewModel = BookingViewModel(getCruiseItineraryUseCase)
 
         viewModel.state.test {
-            // First emission is Loading
-            assertTrue(awaitItem() is BookingState.Loading)
-            
-            // Second emission is Success
-            val successState = awaitItem() as BookingState.Success
-            assertEquals("Test Cruise", successState.itinerary.title)
-            assertEquals("Outside", successState.selectedRoom) // default
-            
+            val initialState = awaitItem()
+            assertTrue(initialState is BookingState.Loading)
             cancelAndIgnoreRemainingEvents()
         }
     }
 
     @Test
-    fun `initial state is Loading and transitions to Error when fetch fails`() = runTest {
-        coEvery { useCase(any()) } returns Result.failure(Exception("Network Error"))
+    fun `when use case succeeds, state becomes Success`() = runTest {
+        coEvery { getCruiseItineraryUseCase(any()) } returns Result.success(mockItinerary)
 
-        viewModel = BookingViewModel(useCase)
-
-        viewModel.state.test {
-            assertTrue(awaitItem() is BookingState.Loading)
-            
-            val errorState = awaitItem() as BookingState.Error
-            assertEquals("Network Error", errorState.message)
-            
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
-    fun `selectRoom updates the selected room in Success state`() = runTest {
-        val mockItinerary = CruiseItinerary(
-            packageCode = "TEST",
-            title = "Test Cruise",
-            departurePort = "Miami",
-            sailDate = "2025-01-01",
-            basePrice = 500.0,
-            currency = "USD",
-            days = emptyList()
-        )
-
-        coEvery { useCase(any()) } returns Result.success(mockItinerary)
-
-        viewModel = BookingViewModel(useCase)
+        viewModel = BookingViewModel(getCruiseItineraryUseCase)
 
         viewModel.state.test {
             awaitItem() // Loading
-            val success = awaitItem() as BookingState.Success
-            assertEquals("Outside", success.selectedRoom) // Default
-            assertEquals(650.0, success.finalPrice, 0.0) // 500 + 150 (Outside)
-
-            // Trigger action
-            viewModel.selectRoom("Balcony")
-
-            val updatedState = awaitItem() as BookingState.Success
-            assertEquals("Balcony", updatedState.selectedRoom)
-            assertEquals(800.0, updatedState.finalPrice, 0.0) // 500 + 300 (Balcony)
-            
+            val successState = awaitItem() as BookingState.Success
+            assertEquals("7 Night Greek Isles Cruise", successState.itinerary.title)
+            assertEquals(1328.0, successState.finalPrice, 0.0)
             cancelAndIgnoreRemainingEvents()
         }
     }
+
+    @Test
+    fun `when use case fails, state becomes Error`() = runTest {
+        coEvery { getCruiseItineraryUseCase(any()) } returns Result.failure(Exception("Network error"))
+
+        viewModel = BookingViewModel(getCruiseItineraryUseCase)
+
+        viewModel.state.test {
+            awaitItem() // Loading
+            val errorState = awaitItem() as BookingState.Error
+            assertEquals("Network error", errorState.message)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    private val mockItinerary = CruiseItinerary(
+        title = "7 Night Greek Isles Cruise",
+        departurePort = "Rome",
+        packageCode = "OY07M869",
+        sailDate = "24 Oct 2027",
+        basePrice = 1328.0,
+        currency = "GBP",
+        days = emptyList()
+    )
 }

@@ -9,6 +9,8 @@ sealed interface Screen {
     @Serializable
     data class Checkout(
         val price: Double,
-        val currency: String
+        val currency: String,
+        val orderTitle: String,
+        val orderDescription: String
     ) : Screen
 }

@@ -8,6 +8,9 @@ class CheckoutSdk private constructor(
     val environment: String
 ) {
 
+    @Deprecated("Use Builder and enableProcessors instead")
+    constructor(paymentProcessor: PaymentProcessor) : this(listOf(paymentProcessor), "production")
+
     class Builder {
         private val enabledProcessors = mutableListOf<PaymentProcessor>()
         private var environment: String = "production"
@@ -20,6 +23,11 @@ class CheckoutSdk private constructor(
                     PaymentProcessorType.HEADLESS -> { /* handled by host app if needed, omitting here for simplicity */ }
                 }
             }
+        }
+        
+        @Deprecated("Use enableProcessors instead")
+        fun setPaymentProcessor(processor: PaymentProcessor) = apply {
+            enabledProcessors.add(processor)
         }
         
         @JvmOverloads
@@ -40,5 +48,11 @@ class CheckoutSdk private constructor(
         val processor = enabledProcessors.find { it.type == processorType } 
             ?: throw IllegalArgumentException("Processor $processorType is not enabled in the SDK.")
         return processor.processPayment(amount, currency)
+    }
+    
+    @Deprecated("Use executeCheckout with PaymentProcessorType instead")
+    suspend fun executeCheckout(amount: Double, currency: String): Boolean {
+        if (enabledProcessors.isEmpty()) return false
+        return enabledProcessors.first().processPayment(amount, currency)
     }
 }

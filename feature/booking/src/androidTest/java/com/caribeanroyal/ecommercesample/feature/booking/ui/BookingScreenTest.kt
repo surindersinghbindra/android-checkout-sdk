@@ -31,7 +31,7 @@ class BookingScreenTest {
         composeTestRule.setContent {
             BookingScreen(
                 viewModel = viewModel,
-                onNavigateToCheckout = { _, _ -> }
+                onNavigateToCheckout = { _, _, _, _ -> }
             )
         }
 
@@ -51,7 +51,7 @@ class BookingScreenTest {
         composeTestRule.setContent {
             BookingScreen(
                 viewModel = viewModel,
-                onNavigateToCheckout = { _, _ -> }
+                onNavigateToCheckout = { _, _, _, _ -> }
             )
         }
 
@@ -80,7 +80,7 @@ class BookingScreenTest {
         composeTestRule.setContent {
             BookingScreen(
                 viewModel = viewModel,
-                onNavigateToCheckout = { _, _ -> }
+                onNavigateToCheckout = { _, _, _, _ -> }
             )
         }
 

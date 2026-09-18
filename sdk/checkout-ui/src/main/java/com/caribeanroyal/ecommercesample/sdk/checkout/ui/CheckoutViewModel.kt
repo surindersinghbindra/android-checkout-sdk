@@ -10,54 +10,93 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-import com.caribeanroyal.ecommercesample.sdk.checkout.core.PaymentProcessorType
-
 class CheckoutViewModel(
-    private val checkoutSdk: CheckoutSdk
+    private val sdkEngine: CheckoutSdk
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(
-        CheckoutState(
-            availableProcessors = checkoutSdk.enabledProcessors.map { it.type }
-        )
-    )
+    private val _state = MutableStateFlow(CheckoutState())
     val state: StateFlow<CheckoutState> = _state.asStateFlow()
+
+    init {
+        handleIntent(CheckoutIntent.LoadProcessors)
+    }
 
     fun handleIntent(intent: CheckoutIntent) {
         when (intent) {
-            is CheckoutIntent.SubmitPayment -> processPayment(intent.amount, intent.currency, intent.processorType)
-            is CheckoutIntent.RetryPayment -> resetState()
-        }
-    }
-
-    private fun processPayment(amount: Double, currency: String, processorType: PaymentProcessorType) {
-        _state.update { it.copy(isLoading = true, errorMessage = null) }
-        viewModelScope.launch {
-            try {
-                val result = checkoutSdk.executeCheckout(amount, currency, processorType)
-                if (result) {
-                    _state.update { it.copy(isLoading = false, isSuccess = true) }
-                } else {
-                    _state.update { it.copy(isLoading = false, errorMessage = "Payment declined") }
-                }
-            } catch (e: Exception) {
-                _state.update { it.copy(isLoading = false, errorMessage = e.message ?: "Unknown error") }
+            is CheckoutIntent.LoadProcessors -> loadProcessors()
+            is CheckoutIntent.SubmitPayment -> processPayment(intent)
+            is CheckoutIntent.NextStep -> {
+                _state.update { it.copy(currentStep = minOf(it.currentStep + 1, 5)) }
+            }
+            is CheckoutIntent.PreviousStep -> {
+                _state.update { it.copy(currentStep = maxOf(it.currentStep - 1, 0)) }
+            }
+            is CheckoutIntent.UpdatePartySize -> {
+                _state.update { it.copy(partySize = intent.size) }
+            }
+            is CheckoutIntent.SelectRoom -> {
+                _state.update { it.copy(roomType = intent.type) }
+            }
+            is CheckoutIntent.ToggleDrinkPackage -> {
+                _state.update { it.copy(includeDrinkPackage = intent.included) }
+            }
+            is CheckoutIntent.ToggleWiFi -> {
+                _state.update { it.copy(includeWiFi = intent.included) }
+            }
+            is CheckoutIntent.UpdateGuestInfo -> {
+                _state.update { it.copy(guestFirstName = intent.firstName, guestLastName = intent.lastName) }
             }
         }
     }
+    
+    fun calculateDynamicTotal(basePrice: Double): Double {
+        val st = _state.value
+        var total = basePrice
+        total += (st.roomPrices[st.roomType] ?: 0.0)
+        
+        // Add-ons (arbitrary price for the sake of demo)
+        if (st.includeDrinkPackage) total += 120.0 * st.partySize
+        if (st.includeWiFi) total += 50.0 * st.partySize
+        
+        return total
+    }
 
-    private fun resetState() {
-        _state.value = CheckoutState(
-            availableProcessors = checkoutSdk.enabledProcessors.map { it.type }
-        )
+    private fun loadProcessors() {
+        val processors = sdkEngine.enabledProcessors
+        _state.update { it.copy(availableProcessors = processors) }
+    }
+
+    private fun processPayment(intent: CheckoutIntent.SubmitPayment) {
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = true, error = null) }
+            
+            try {
+                val success = sdkEngine.executeCheckout(
+                    amount = intent.amount,
+                    currency = intent.currency,
+                    processorType = intent.processor.type
+                )
+                
+                if (success) {
+                    _state.update { it.copy(isLoading = false, isSuccess = true) }
+                } else {
+                    _state.update { it.copy(isLoading = false, error = "Payment failed") }
+                }
+            } catch (e: Exception) {
+                _state.update { it.copy(isLoading = false, error = e.message) }
+            }
+        }
     }
 }
 
 class CheckoutViewModelFactory(
-    private val checkoutSdk: CheckoutSdk
+    private val sdkEngine: CheckoutSdk
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        @Suppress("UNCHECKED_CAST")
-        return CheckoutViewModel(checkoutSdk) as T
+        if (modelClass.isAssignableFrom(CheckoutViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return CheckoutViewModel(sdkEngine) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

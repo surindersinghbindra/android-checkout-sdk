@@ -15,10 +15,9 @@ import com.caribeanroyal.ecommercesample.feature.booking.viewmodel.BookingViewMo
 @Composable
 fun BookingScreen(
     viewModel: BookingViewModel,
-    onNavigateToCheckout: (Double, String) -> Unit
+    onNavigateToCheckout: (Double, String, String, String) -> Unit
 ) {
     val state by viewModel.state.collectAsState()
-    var showRoomSheet by remember { mutableStateOf(false) }
 
     when (val currentState = state) {
         is BookingState.Loading -> {
@@ -59,23 +58,6 @@ fun BookingScreen(
                             }
                         }
                     }
-
-                    item {
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = { showRoomSheet = true }
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
-                            ) {
-                                Text("Room Type: ${currentState.selectedRoom}", fontWeight = FontWeight.Bold)
-                                Text("Change", color = MaterialTheme.colorScheme.primary)
-                            }
-                        }
-                    }
                 }
 
                 Surface(
@@ -87,39 +69,20 @@ fun BookingScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "Total: £${currentState.finalPrice}",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Button(onClick = { onNavigateToCheckout(currentState.finalPrice, cruise.currency) }) {
-                            Text("Book Now")
+                        Column {
+                            Text("Base Price")
+                            Text(
+                                text = "${cruise.currency} ${currentState.finalPrice}",
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold
+                            )
                         }
-                    }
-                }
-            }
-
-            if (showRoomSheet) {
-                ModalBottomSheet(onDismissRequest = { showRoomSheet = false }) {
-                    Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
-                        Text("Select Room Type", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-                        Spacer(modifier = Modifier.height(16.dp))
-                        currentState.roomPrices.keys.forEach { room ->
-                            Row(
-                                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
-                            ) {
-                                RadioButton(
-                                    selected = (room == currentState.selectedRoom),
-                                    onClick = {
-                                        viewModel.selectRoom(room)
-                                        showRoomSheet = false
-                                    }
-                                )
-                                Text("$room (+£${currentState.roomPrices[room]})", style = MaterialTheme.typography.bodyLarge)
-                            }
+                        Button(onClick = { 
+                            val desc = "Departure: ${cruise.departurePort}\nDate: ${cruise.sailDate}"
+                            onNavigateToCheckout(currentState.finalPrice, cruise.currency, cruise.title, desc) 
+                        }) {
+                            Text("Start Booking")
                         }
-                        Spacer(modifier = Modifier.height(32.dp))
                     }
                 }
             }

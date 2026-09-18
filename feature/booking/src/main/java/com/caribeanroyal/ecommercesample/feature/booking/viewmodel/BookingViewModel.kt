@@ -14,16 +14,9 @@ import kotlinx.coroutines.launch
 sealed class BookingState {
     object Loading : BookingState()
     data class Success(
-        val itinerary: CruiseItinerary,
-        val selectedRoom: String = "Outside",
-        val roomPrices: Map<String, Double> = mapOf(
-            "Interior" to 0.0,
-            "Outside" to 150.0,
-            "Balcony" to 300.0,
-            "Suite" to 800.0
-        )
+        val itinerary: CruiseItinerary
     ) : BookingState() {
-        val finalPrice: Double get() = itinerary.basePrice + (roomPrices[selectedRoom] ?: 0.0)
+        val finalPrice: Double get() = itinerary.basePrice
     }
     data class Error(val message: String) : BookingState()
 }
@@ -33,32 +26,21 @@ class BookingViewModel(
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<BookingState>(BookingState.Loading)
-    val state: StateFlow<BookingState> = _state.asStateFlow()
+    val state = _state.asStateFlow()
 
     init {
-        loadItinerary("OY07M869")
+        fetchItinerary()
     }
 
-    private fun loadItinerary(packageCode: String) {
+    private fun fetchItinerary() {
         viewModelScope.launch {
-            _state.value = BookingState.Loading
-            getCruiseItineraryUseCase(packageCode)
-                .onSuccess { itinerary ->
-                    _state.value = BookingState.Success(itinerary = itinerary)
+            getCruiseItineraryUseCase("OY07M869")
+                .onSuccess { cruise ->
+                    _state.value = BookingState.Success(cruise)
                 }
                 .onFailure { error ->
                     _state.value = BookingState.Error(error.message ?: "Failed to load itinerary")
                 }
-        }
-    }
-
-    fun selectRoom(roomType: String) {
-        _state.update { currentState ->
-            if (currentState is BookingState.Success) {
-                currentState.copy(selectedRoom = roomType)
-            } else {
-                currentState
-            }
         }
     }
 }

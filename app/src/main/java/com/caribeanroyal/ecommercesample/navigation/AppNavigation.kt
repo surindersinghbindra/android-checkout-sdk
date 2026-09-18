@@ -41,8 +41,13 @@ fun AppNavigation(
             
             BookingScreen(
                 viewModel = bookingViewModel,
-                onNavigateToCheckout = { price, currency ->
-                    navController.navigate(Screen.Checkout(price = price, currency = currency))
+                onNavigateToCheckout = { price, currency, title, desc ->
+                    navController.navigate(Screen.Checkout(
+                        price = price, 
+                        currency = currency,
+                        orderTitle = title,
+                        orderDescription = desc
+                    ))
                 }
             )
         }
@@ -59,6 +64,8 @@ fun AppNavigation(
             CheckoutScreen(
                 amount = checkoutRoute.price,
                 currency = checkoutRoute.currency,
+                orderTitle = checkoutRoute.orderTitle,
+                orderDescription = checkoutRoute.orderDescription,
                 viewModel = checkoutViewModel,
                 themeConfig = checkoutThemeConfig,
                 onNavigateBack = {

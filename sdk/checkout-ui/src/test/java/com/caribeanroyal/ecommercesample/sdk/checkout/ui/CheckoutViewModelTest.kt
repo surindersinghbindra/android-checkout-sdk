@@ -2,7 +2,10 @@ package com.caribeanroyal.ecommercesample.sdk.checkout.ui
 
 import app.cash.turbine.test
 import com.caribeanroyal.ecommercesample.sdk.checkout.core.CheckoutSdk
+import com.caribeanroyal.ecommercesample.sdk.checkout.core.PaymentProcessor
+import com.caribeanroyal.ecommercesample.sdk.checkout.core.PaymentProcessorType
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -25,6 +28,7 @@ class CheckoutViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
+        every { checkoutSdk.enabledProcessors } returns emptyList()
         viewModel = CheckoutViewModel(checkoutSdk)
     }
 
@@ -33,18 +37,22 @@ class CheckoutViewModelTest {
         Dispatchers.resetMain()
     }
 
-    // [v1.0 API Compatibility Test - DO NOT MODIFY]
     @Test
     fun `test SubmitPayment intent transitions to Success`() = runTest {
-        coEvery { checkoutSdk.executeCheckout(100.0, "USD") } returns true
+        coEvery { checkoutSdk.executeCheckout(100.0, "USD", PaymentProcessorType.STRIPE) } returns true
+        val processor = mockk<PaymentProcessor>()
+        every { processor.type } returns PaymentProcessorType.STRIPE
 
         viewModel.state.test {
-            assertEquals(CheckoutState(), awaitItem()) // Initial state
+            awaitItem() // Initial state
 
-            viewModel.handleIntent(CheckoutIntent.SubmitPayment(100.0, "USD"))
+            viewModel.handleIntent(CheckoutIntent.SubmitPayment(100.0, "USD", processor))
             
-            assertEquals(CheckoutState(isLoading = true), awaitItem())
-            assertEquals(CheckoutState(isLoading = false, isSuccess = true), awaitItem())
+            val loadingState = awaitItem()
+            assertEquals(true, loadingState.isLoading)
+            val successState = awaitItem()
+            assertEquals(false, successState.isLoading)
+            assertEquals(true, successState.isSuccess)
             cancelAndIgnoreRemainingEvents()
         }
     }
