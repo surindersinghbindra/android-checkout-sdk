@@ -19,7 +19,7 @@ import com.caribeanroyal.ecommercesample.feature.booking.viewmodel.BookingViewMo
 @Composable
 fun BookingScreen(
     viewModel: BookingViewModel,
-    onNavigateToCheckout: (Double, String, String, String) -> Unit
+    onNavigateToCruiseDetail: (String) -> Unit
 ) {
     val state by viewModel.state.collectAsState()
 
@@ -50,6 +50,7 @@ fun BookingScreen(
                 ) {
                     items(currentState.itineraries) { cruise ->
                         Card(
+                            onClick = { onNavigateToCruiseDetail(cruise.packageCode) },
                             modifier = Modifier.fillMaxWidth(),
                             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
                             shape = RoundedCornerShape(12.dp)
@@ -106,10 +107,9 @@ fun BookingScreen(
                                             )
                                         }
                                         Button(onClick = { 
-                                            val desc = "Departure: ${cruise.departurePort}\nDate: ${cruise.sailDate}"
-                                            onNavigateToCheckout(cruise.basePrice, cruise.currency, cruise.title, desc) 
+                                            onNavigateToCruiseDetail(cruise.packageCode) 
                                         }) {
-                                            Text("Start Booking")
+                                            Text("View Details")
                                         }
                                     }
                                 }

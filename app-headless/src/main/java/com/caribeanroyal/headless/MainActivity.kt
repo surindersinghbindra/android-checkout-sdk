@@ -14,12 +14,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.caribeanroyal.ecommercesample.core.network.repository.NetworkCruiseRepositoryImpl
 import com.caribeanroyal.ecommercesample.core.domain.usecase.SearchCruisesUseCase
 import com.caribeanroyal.ecommercesample.core.network.api.CruiseApiService
 import com.caribeanroyal.ecommercesample.core.network.interceptor.MockCruiseInterceptor
-import com.caribeanroyal.ecommercesample.core.network.repository.NetworkCruiseRepositoryImpl
 import com.caribeanroyal.ecommercesample.designsystem.theme.ECommerceTheme
 import com.caribeanroyal.ecommercesample.feature.booking.ui.BookingScreen
+import com.caribeanroyal.ecommercesample.feature.booking.ui.CruiseDetailScreen
 import com.caribeanroyal.ecommercesample.feature.booking.viewmodel.BookingViewModel
 import com.caribeanroyal.ecommercesample.feature.booking.viewmodel.BookingViewModelFactory
 import com.caribeanroyal.ecommercesample.sdk.checkout.core.CheckoutSdk
@@ -33,7 +34,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // Manual Dependency Injection for the Headless App
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(MockCruiseInterceptor())
             .build()
@@ -47,8 +47,8 @@ class MainActivity : ComponentActivity() {
         val apiService = retrofit.create(CruiseApiService::class.java)
         val repository = NetworkCruiseRepositoryImpl(apiService)
         val searchCruisesUseCase = SearchCruisesUseCase(repository)
+        val bookingFactory = BookingViewModelFactory(searchCruisesUseCase)
 
-        // Initialize ONLY the Core SDK with built-in processors
         val sdkEngine = CheckoutSdk.Builder()
             .enableProcessors(listOf(PaymentProcessorType.ADYEN, PaymentProcessorType.STRIPE))
             .setEnvironment("headless-production")
@@ -61,18 +61,30 @@ class MainActivity : ComponentActivity() {
                     
                     NavHost(navController = navController, startDestination = "booking") {
                         composable("booking") { backStackEntry ->
-                            val factory = BookingViewModelFactory(searchCruisesUseCase)
-                            val bookingViewModel = ViewModelProvider(backStackEntry, factory)[BookingViewModel::class.java]
+                            val bookingViewModel = ViewModelProvider(this@MainActivity, bookingFactory)[BookingViewModel::class.java]
                             
                             BookingScreen(
                                 viewModel = bookingViewModel,
-                                onNavigateToCheckout = { price, currency, title, desc ->
-                                    // In a real app we'd URL encode these, but this is a sample
-                                    navController.navigate("checkout/$price/$currency/${java.net.URLEncoder.encode(title, "UTF-8")}/${java.net.URLEncoder.encode(desc, "UTF-8")}")
+                                onNavigateToCruiseDetail = { packageCode ->
+                                    navController.navigate("cruiseDetail/$packageCode")
                                 }
                             )
                         }
                         
+                        composable("cruiseDetail/{packageCode}") { backStackEntry ->
+                            val packageCode = backStackEntry.arguments?.getString("packageCode") ?: ""
+                            val bookingViewModel = ViewModelProvider(this@MainActivity, bookingFactory)[BookingViewModel::class.java]
+
+                            CruiseDetailScreen(
+                                packageCode = packageCode,
+                                viewModel = bookingViewModel,
+                                onNavigateBack = { navController.popBackStack() },
+                                onNavigateToCheckout = { price, currency, title, desc ->
+                                    navController.navigate("checkout/$price/$currency/${java.net.URLEncoder.encode(title, "UTF-8")}/${java.net.URLEncoder.encode(desc, "UTF-8")}")
+                                }
+                            )
+                        }
+
                         composable("checkout/{price}/{currency}/{title}/{desc}") { backStackEntry ->
                             val priceStr = backStackEntry.arguments?.getString("price") ?: "0.0"
                             val currency = backStackEntry.arguments?.getString("currency") ?: "USD"
@@ -118,8 +130,6 @@ fun CustomHeadlessCheckoutScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Notice we are NOT using CheckoutThemeConfig or CheckoutViewModel from :sdk:checkout-ui
-        // We are building a completely custom UI structure!
         Text(
             text = "Custom Headless Checkout",
             style = MaterialTheme.typography.headlineMedium

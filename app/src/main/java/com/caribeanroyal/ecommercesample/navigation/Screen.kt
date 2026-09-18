@@ -7,6 +7,11 @@ sealed interface Screen {
     data object Booking : Screen
 
     @Serializable
+    data class CruiseDetail(
+        val packageCode: String
+    ) : Screen
+
+    @Serializable
     data class Checkout(
         val price: Double,
         val currency: String,

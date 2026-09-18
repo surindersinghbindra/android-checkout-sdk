@@ -9,18 +9,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.caribeanroyal.ecommercesample.feature.booking.ui.BookingScreen
+import com.caribeanroyal.ecommercesample.feature.booking.ui.CruiseDetailScreen
 import com.caribeanroyal.ecommercesample.sdk.checkout.core.CheckoutSdk
 import com.caribeanroyal.ecommercesample.sdk.checkout.ui.CheckoutScreen
 import com.caribeanroyal.ecommercesample.sdk.checkout.ui.CheckoutThemeConfig
 import com.caribeanroyal.ecommercesample.sdk.checkout.ui.CheckoutViewModel
 import com.caribeanroyal.ecommercesample.sdk.checkout.ui.CheckoutViewModelFactory
-
 import androidx.navigation.toRoute
-
 import com.caribeanroyal.ecommercesample.core.domain.usecase.SearchCruisesUseCase
 import com.caribeanroyal.ecommercesample.feature.booking.viewmodel.BookingViewModel
 import com.caribeanroyal.ecommercesample.feature.booking.viewmodel.BookingViewModelFactory
 import com.caribeanroyal.ecommercesample.sdk.checkout.ui.CheckoutStepsConfig
+import androidx.compose.runtime.remember
 
 @Composable
 fun AppNavigation(
@@ -31,18 +31,35 @@ fun AppNavigation(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController()
 ) {
+    // Instantiate a shared BookingViewModel factory for both Booking & Detail screens
+    val bookingFactory = BookingViewModelFactory(searchCruisesUseCase)
+
     NavHost(
         navController = navController,
         startDestination = Screen.Booking,
         modifier = modifier
     ) {
         composable<Screen.Booking> { backStackEntry ->
-            val factory = BookingViewModelFactory(searchCruisesUseCase)
             val bookingViewModel =
-                ViewModelProvider(backStackEntry, factory)[BookingViewModel::class.java]
+                ViewModelProvider(viewModelStoreOwner, bookingFactory)[BookingViewModel::class.java]
 
             BookingScreen(
                 viewModel = bookingViewModel,
+                onNavigateToCruiseDetail = { packageCode ->
+                    navController.navigate(Screen.CruiseDetail(packageCode = packageCode))
+                }
+            )
+        }
+
+        composable<Screen.CruiseDetail> { backStackEntry ->
+            val detailRoute = backStackEntry.toRoute<Screen.CruiseDetail>()
+            val bookingViewModel =
+                ViewModelProvider(viewModelStoreOwner, bookingFactory)[BookingViewModel::class.java]
+
+            CruiseDetailScreen(
+                packageCode = detailRoute.packageCode,
+                viewModel = bookingViewModel,
+                onNavigateBack = { navController.popBackStack() },
                 onNavigateToCheckout = { price, currency, title, desc ->
                     navController.navigate(
                         Screen.Checkout(
@@ -58,10 +75,7 @@ fun AppNavigation(
 
         composable<Screen.Checkout> { backStackEntry ->
             val checkoutRoute = backStackEntry.toRoute<Screen.Checkout>()
-            // We can now use checkoutRoute.price and checkoutRoute.currency if the SDK supported it!
 
-            // Instantiate the SDK's ViewModel scoped to THIS specific navigation entry,
-            // so returning to this screen creates a fresh state instead of the old success state.
             val factory = CheckoutViewModelFactory(checkoutSdk)
             val checkoutViewModel =
                 ViewModelProvider(backStackEntry, factory)[CheckoutViewModel::class.java]
@@ -74,8 +88,8 @@ fun AppNavigation(
                 viewModel = checkoutViewModel,
                 themeConfig = checkoutThemeConfig,
                 stepsConfig = CheckoutStepsConfig(
-                    showExtras = true, // Hides the drink/wifi package screen
-                    showPartySize = true, // Hardcodes party size to 1 if skipped
+                    showExtras = true,
+                    showPartySize = true,
                     showRoomSelection = true
                 ),
                 onNavigateBack = {
