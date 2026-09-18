@@ -1,5 +1,6 @@
 [versions]
 agp = "8.3.2"
+checkoutSdk = "1.0.5"
 kotlin = "2.0.21"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -20,6 +21,8 @@ ksp = "2.0.21-1.0.25"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+checkout-core = { group = "com.caribeanroyal.ecommercesample", name = "checkout-core", version.ref = "checkoutSdk" }
+checkout-ui = { group = "com.caribeanroyal.ecommercesample", name = "checkout-ui", version.ref = "checkoutSdk" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

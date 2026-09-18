@@ -66,8 +66,8 @@ android {
 dependencies {
     implementation(project(":feature:booking"))
     // --- To use the published remote SDK ---
-    implementation("com.caribeanroyal.ecommercesample:checkout-core:1.0.5")
-    implementation("com.caribeanroyal.ecommercesample:checkout-ui:1.0.5")
+    implementation(libs.checkout.core)
+    implementation(libs.checkout.ui)
 
     // --- To build the SDK from local source (uncomment these and comment the remote ones) ---
     // implementation(project(":sdk:checkout-core"))
